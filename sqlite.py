@@ -1,6 +1,5 @@
-import scraperwiki
 from dumptruck import DumpTruck
-
+import re
 dt = DumpTruck()
 
 def execute(sqlquery, data=None, verbose=1):
@@ -10,21 +9,30 @@ def execute(sqlquery, data=None, verbose=1):
 
 def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
     dt.create_table(data, table_name = table_name)
-    #dt.add_index(unique_keys)
+    if unique_keys != []:
+        dt.create_index(table_name, unique_keys, unique = True, if_not_exists = True)
     return dt.insert(data, table_name = table_name)
    
 def attach(name, asname=None, verbose=1):
-    "This somehow connects to scraperwiki."
-    raise NotImplementedError
+    "This somehow downloads the database from scraperwiki."
+    if asname == None:
+        asname = re.sub(r'[^a-zA-Z]', '', name)
+    os.system('wget -O %s https://scraperwiki.com/scrapers/export_sqlite/%s' % (asname, name))
+    dt.execute('attach {0} AS {0}'.format(asname), commit = False)
 
 def commit(verbose=1):
     dt.commit()
 
 def select(sqlquery, data=None, verbose=1):
     sqlquery = "select %s" % sqlquery   # maybe check if select or another command is there already?
-    return dt.execute(sqlquery, *data, commit = False)
+    if data == None:
+        return dt.execute(sqlquery, commit = False)
+    else:
+        raise NotImplementedError('Dunno what that data argument does')
 
 def show_tables(dbname=""):
+    if dbname != '':
+        raise NotImplementedError('Only the main database is implemented')
     return dt.tables()
 
 def save_var(name, value, verbose=2):
