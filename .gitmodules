@@ -1,0 +1,3 @@
+[submodule "dumptruck"]
+	path = dumptruck
+	url = git@github.com:tlevine/dumptruck.git
