@@ -2,7 +2,8 @@ from unittest import TestCase, main
 from json import loads, dumps
 import sqlite
 import sqlite3
-import os, shutil
+import os
+import shutil
 import datetime
 
 class TestDb(TestCase):
@@ -36,7 +37,7 @@ class TestSaveVar(TestDb):
   def setUp(self):
     self.cleanUp()
     sqlite.save_var("birthday","November 30, 1888")
-    connection=sqlite3.connect('test.db')
+    connection=sqlite3.connect('dumptruck.db')
     self.cursor=connection.cursor()
 
   def test_insert(self):
@@ -60,7 +61,7 @@ class TestShowTables(TestDb):
 class SaveAndCheck(TestDb):
   def save_and_check(self, dataIn, tableIn, dataOut, tableOut = None, twice = True):
     if tableOut == None:
-      tableOut = quote(tableIn)
+      tableOut = tableIn
 
     # Insert
     sqlite.save([], dataIn, tableIn)
