@@ -253,5 +253,13 @@ class TestAttach(TestDb):
     os.system('cat tests.py >> hsphfaculty')
     self.hsph()
 
+  def setUp(self):
+    super(TestAttach, self).setUp()
+    os.system('rm hsphfaculty')
+
+  def tearDown(self):
+    super(TestAttach, self).tearDown()
+    os.system('rm hsphfaculty')
+
 if __name__ == '__main__':
   main()
