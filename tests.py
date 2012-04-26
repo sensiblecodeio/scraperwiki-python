@@ -11,9 +11,10 @@ class TestDb(TestCase):
   DBNAME = ':memory:'
   def setUp(self):
     self.cleanUp()
+    sqlite._connect(self.DBNAME)
 
-# def tearDown(self):
-#   self.cleanUp()
+  def tearDown(self):
+    self.cleanUp()
 
   def cleanUp(self):
     "Clean up temporary files, then reinitialize."
@@ -22,7 +23,6 @@ class TestDb(TestCase):
         os.remove(self.DBNAME)
       except OSError:
         pass
-    sqlite._initialize(self.DBNAME)
 
 class SaveGetVar(TestDb):
   def savegetvar(self, var):

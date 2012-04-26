@@ -1,12 +1,12 @@
 from dumptruck import DumpTruck
 import re
 
-def _initialize(dbname = 'scraperwiki.db'):
+def _connect(dbname = 'scraperwiki.db'):
   'Initialize the database (again). This is mainly for testing'
   global dt
   dt = DumpTruck(dbname = dbname)
 
-_initialize()
+_connect()
 
 def execute(sqlquery, data=None, verbose=1):
     """ Should return list of lists, but returns list of dicts """
