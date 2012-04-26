@@ -53,7 +53,7 @@ In general, features that have not been implemented raise a `NotImplementedError
 * `scraperwiki.sqlite.show_tables` only works for the main database is implemented.
 
 ### Geo
-The UK geocoding helpers have been implemented
+The UK geocoding helpers have not been implemented
 
 * `scraperwiki.geo`
 
