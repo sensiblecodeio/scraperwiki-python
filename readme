@@ -52,6 +52,13 @@ In general, features that have not been implemented raise a `NotImplementedError
 * All of the `verbose` keyword arguments (These control what is printed on the ScraperWiki code editor)
 * `scraperwiki.sqlite.show_tables` only works for the main database is implemented.
 
+### Geo
+The UK geocoding helpers have been implemented
+
+* `scraperwiki.geo`
+
+<!-- They have also been released as a separate library (ukgeo). Not true yet. -->
+
 ### Utils
 `scraperwiki.utils` is implemented, as well as the following functions.
 
@@ -60,16 +67,13 @@ In general, features that have not been implemented raise a `NotImplementedError
 * `scraperwiki.pdftoxml`
 * `scraperwiki.swimport`
 
-### Not implemented
-These submodules have not been implemented
+### Deprecated
+These submodules are deprecated and thus will not be implemented
 
-* `scraperwiki.geo`
+* `scraperwiki.apiwrapper`
 * `scraperwiki.datastore`
-* `scraperwiki.metadata`
-* `scraperwiki.stacktrace`
-* `scraperwiki.newsql`
 * `scraperwiki.jsqlite`
-
-Nothing else is implemented yet.
+* `scraperwiki.metadata`
+* `scraperwiki.newsql`
 
 [docs]: https://scraperwiki.com/docs/python/python_help_documentation/
