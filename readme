@@ -68,7 +68,7 @@ The UK geocoding helpers have not been implemented
 * `scraperwiki.swimport`
 
 ### Deprecated
-These submodules are deprecated and thus will not be implemented
+These submodules are deprecated and thus will not be implemented.
 
 * `scraperwiki.apiwrapper`
 * `scraperwiki.datastore`
