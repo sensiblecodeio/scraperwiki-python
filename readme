@@ -63,12 +63,12 @@ In general, features that have not been implemented raise a `NotImplementedError
 ### Not implemented
 These submodules have not been implemented
 
-* geo
-* datastore
-* metadata
-* stacktrace
-* newsql
-* jsqlite
+* `scraperwiki.geo`
+* `scraperwiki.datastore`
+* `scraperwiki.metadata`
+* `scraperwiki.stacktrace`
+* `scraperwiki.newsql`
+* `scraperwiki.jsqlite`
 
 Nothing else is implemented yet.
 
