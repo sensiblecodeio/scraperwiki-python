@@ -52,7 +52,24 @@ In general, features that have not been implemented raise a `NotImplementedError
 * All of the `verbose` keyword arguments (These control what is printed on the ScraperWiki code editor)
 * `scraperwiki.sqlite.show_tables` only works for the main database is implemented.
 
-### Everything else
+### Utils
+`scraperwiki.utils` is implemented, as well as the following functions.
+
+* `scraperwiki.log`
+* `scraperwiki.scrape`
+* `scraperwiki.pdftoxml`
+* `scraperwiki.swimport`
+
+### Not implemented
+These submodules have not been implemented
+
+* geo
+* datastore
+* metadata
+* stacktrace
+* newsql
+* jsqlite
+
 Nothing else is implemented yet.
 
 [docs]: https://scraperwiki.com/docs/python/python_help_documentation/
