@@ -59,11 +59,24 @@ class TestSelect(TestDb):
     data_expected = [{'town': u'\r\nCenturion', 'date_scraped': 1327791915.618461, 'Fax': u' (012) 312 3647', 'Tel': u' (012) 686 0500', 'address_raw': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001\n (012) 686 0500\n (012) 312 3647', 'blockId': 14, 'street-address': None, 'postcode': u'\r\n0001', 'address': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001', 'branchName': u'Head Office'}, {'town': u'\r\nCenturion', 'date_scraped': 1327792245.787187, 'Fax': u' (012) 312 3647', 'Tel': u' (012) 686 0500', 'address_raw': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001\n (012) 686 0500\n (012) 312 3647', 'blockId': 14, 'street-address': u'\r\n420 Witch Hazel Ave\n\r\nEcopark', 'postcode': u'\r\n0001', 'address': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001', 'branchName': u'Head Office'}, {'town': u'\r\nMiddelburg', 'date_scraped': 1327791915.618461, 'Fax': u' (013) 282 6558', 'Tel': u' (013) 283 3500', 'address_raw': u'\r\n184 Jan van Riebeeck Street\n\r\nMiddelburg\n\r\n1050\n (013) 283 3500\n (013) 282 6558', 'blockId': 17, 'street-address': None, 'postcode': u'\r\n1050', 'address': u'\r\n184 Jan van Riebeeck Street\n\r\nMiddelburg\n\r\n1050', 'branchName': u'Middelburg'}]
     self.assertListEqual(data_observed, data_expected)
 
-class TestShowTables(TestDb):
+class TestShowTablesIterator(TestDb):
   def test_show_tables(self):
     shutil.copy('dumptruck/fixtures/landbank_branches.sqlite',self.DBNAME)
     sqlite._connect(self.DBNAME)
-    self.assertSetEqual(sqlite.show_tables(),set(['blocks','branches']))
+    observed = set([name for name in sqlite.show_tables()])
+    expected = set(['blocks','branches'])
+    self.assertSetEqual(observed, expected)
+
+class TestShowTablesDict(TestDb):
+  def test_show_tables(self):
+    shutil.copy('dumptruck/fixtures/landbank_branches.sqlite', self.DBNAME)
+    sqlite._connect(self.DBNAME)
+    observed = sqlite.show_tables()
+    expected = {
+      'blocks': 'CREATE TABLE `blocks` (`blockPerson` text, `date_scraped` real, `region` text, `blockId` integer, `blockName` text)',
+      'branches': 'CREATE TABLE `branches` (`town` text, `date_scraped` real, `Fax` text, `Tel` text, `address_raw` text, `blockId` integer, `postcode` text, `address` text, `branchName` text, `street-address` text)'
+    }
+    self.assertDictEqual(observed, expected)
 
 class SaveAndCheck(TestDb):
   def save_and_check(self, dataIn, tableIn, dataOut, tableOut = None, twice = True):

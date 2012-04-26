@@ -40,7 +40,8 @@ def select(sqlquery, data=None, verbose=1):
 def show_tables(dbname=""):
     if dbname != '':
         raise NotImplementedError('Only the main database is implemented')
-    return dt.tables()
+    response = select('name, sql from sqlite_master where type = "table";')
+    return {row['name']: row['sql'] for row in response}
 
 def save_var(name, value, verbose=2):
     return dt.save_var(name, value)
