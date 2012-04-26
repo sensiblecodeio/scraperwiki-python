@@ -25,7 +25,7 @@ The local `scraperwiki.sqlite` is powered by
 [DumpTruck](http://dumptruck.io), so some things
 work a bit differently.
 
-Data are stored to a local sqlite database named `dumptruck.db`.
+Data are stored to a local sqlite database named `scraperwiki.db`.
 
 Bizarre table and column names are supported.
 
