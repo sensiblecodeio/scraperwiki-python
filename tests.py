@@ -39,7 +39,7 @@ class TestSaveGetDict(SaveGetVar):
 
 class TestSaveVar(TestDb):
   def setUp(self):
-    self.cleanUp()
+    super(TestSaveVar, self).setUp()
     sqlite.save_var("birthday","November 30, 1888")
     connection=sqlite3.connect(self.DBNAME)
     self.cursor=connection.cursor()
