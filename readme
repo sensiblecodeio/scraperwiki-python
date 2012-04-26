@@ -17,8 +17,42 @@ The local library aims to be a drop-in replacement.
 In reality, the local version sometimes works better,
 though not all of the features have been implemented.
 
-### Differences
+## Differences
 
-### Not implemented
+### Datastore differences
+
+The local `scraperwiki.sqlite` is powered by
+[DumpTruck](http://dumptruck.io), so some things
+work a bit differently.
+
+Data are stored to a local sqlite database named `dumptruck.db`.
+
+Bizarre table and column names are supported.
+
+Dates and datetimes are stored in a different standard format.
+
+`scraperwiki.sqlite.execute` returns lists of dictionaries.
+
+`scraperwiki.sqlite.attach` downloads the whole datastore from ScraperWiki,
+So you might not want to use this too often on large databases.
+
+`scraperwiki.sqlite.get_var` and `scraperwiki.sqlite.save_var`
+store their data in the table `_dumptruckvars`, and they use
+a slightly different format.
+
+### Other Differences
+
+## Status of implementation
+In general, features that have not been implemented raise a `NotImplementedError`.
+
+### Datastore
+`scraperwiki.sqlite` is missing the following features.
+
+* Data argument to `scraperwiki.sqlite.select`
+* All of the `verbose` keyword arguments (These control what is printed on the ScraperWiki code editor)
+* `scraperwiki.sqlite.show_tables` only works for the main database is implemented.
+
+### Everything else
+Nothing else is implemented yet.
 
 [docs]: https://scraperwiki.com/docs/python/python_help_documentation/
