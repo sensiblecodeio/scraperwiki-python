@@ -1,5 +1,6 @@
 from dumptruck import DumpTruck
 import re
+import os
 
 def _connect(dbname = 'scraperwiki.db'):
   'Initialize the database (again). This is mainly for testing'

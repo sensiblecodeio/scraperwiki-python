@@ -6,6 +6,7 @@ import sqlite3
 import os
 import shutil
 import datetime
+from dumptruck.convert import quote
 
 class TestDb(TestCase):
   DBNAME = 'scraperwiki.db'
@@ -65,7 +66,7 @@ class TestSaveVar(TestDb):
 class SaveAndCheck(TestDb):
   def save_and_check(self, dataIn, tableIn, dataOut, tableOut = None, twice = True):
     if tableOut == None:
-      tableOut = tableIn
+      tableOut = quote(tableIn)
 
     # Insert
     sqlite.save([], dataIn, tableIn)
@@ -236,12 +237,21 @@ class TestSaveDateTime(SaveAndCheck):
     )
 
 class TestAttach(TestDb):
-  def test_hsph(self):
+  def hsph(self):
     #https://scraperwiki.com/scrapers/export_sqlite/hsph_faculty_1/
     sqlite.attach('hsph_faculty_1')
-    observed = sqlite.select('count(*) from maincol')
+    observed = sqlite.select('count(*) as "c" from maincol')[0]['c']
     expected = 461
     self.assertEqual(observed, expected)
+
+  def test_hsph1(self):
+    "Do it normally"
+    self.hsph()
+
+  def test_hsph2(self):
+    "Then corrupt the file and do it again"
+    os.system('cat tests.py >> hsphfaculty')
+    self.hsph()
 
 if __name__ == '__main__':
   main()
