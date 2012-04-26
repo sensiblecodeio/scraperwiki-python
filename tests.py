@@ -8,7 +8,7 @@ import shutil
 import datetime
 
 class TestDb(TestCase):
-  DBNAME = ':memory:'
+  DBNAME = 'scraperwiki.db'
   def setUp(self):
     self.cleanUp()
     sqlite._connect(self.DBNAME)
