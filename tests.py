@@ -276,5 +276,10 @@ class TestAttach(TestDb):
     super(TestAttach, self).tearDown()
     os.system('rm hsphfaculty')
 
+class TestSWImport(TestCase):
+  def test_csv2sw(self):
+    csv2sw = swimport('csv2sw')
+    self.assertEquals(type(csv2sw.read.csv), type(lambda : None) )
+
 if __name__ == '__main__':
   main()

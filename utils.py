@@ -75,7 +75,7 @@ def swimport(name, swinstance="https://scraperwiki.com"):
     'Import from a ScraperWiki script'
     url = "%s/editor/raw/%s" % (swinstance, name)
     os.system('wget -O %s.py \'%s\'' % (name, url))
-    __import__(name)
+    return __import__(name)
 
 def jsviewcall(name, **args):
     'callback to a view with parameter lists (cross language capability)'
