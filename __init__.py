@@ -22,3 +22,4 @@ class CPUTimeExceededError(Error):
     pass
 
 from utils import log, scrape, pdftoxml, swimport
+import sqlite
