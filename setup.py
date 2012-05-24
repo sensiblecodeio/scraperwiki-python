@@ -39,9 +39,8 @@ if not has_external_dependency('pdftohtml'):
 
 setup(name='scraperwiki_local',
     author='Thomas Levine',
-    #author_email='perluette@thomaslevine.com',
     author_email='thomas@scraperwiki.com',
-    description='Relaxing interface to SQLite',
+    description='Local version of scraperwiki scraperlibs',
     url='https://github.com/tlevine/scraperwiki_local',
     classifiers=[
         'Intended Audience :: Developers',
