@@ -8,6 +8,7 @@ Local version of ScraperWiki Utils, documentation here:
 https://scraperwiki.com/docs/python/python_help_documentation/
 '''
 
+import os
 import warnings
 import tempfile
 import urllib, urllib2
