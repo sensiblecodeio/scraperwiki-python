@@ -2,8 +2,8 @@
 # https://github.com/github/gitignore
 
 # Sqlite
-#*.db
-#*.sqlite
+*.db
+*.sqlite
 
 # Vim
 .*.sw[a-z]

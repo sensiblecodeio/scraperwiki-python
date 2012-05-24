@@ -15,12 +15,13 @@
 # You should have received a copy of the GNU Affero Public License
 # along with Local Scraperlibs.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 from distutils.core import setup
 import scraperwiki
 
 def has_external_dependency(name):
     'Check that a non-Python dependency is installed.'
-    for dir in os.environ['PATH'].split(':'):
+    for directory in os.environ['PATH'].split(':'):
         if os.path.exists(os.path.join(directory, name)):
             return True
     return False
