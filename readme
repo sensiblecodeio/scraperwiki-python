@@ -79,3 +79,7 @@ These submodules are deprecated and thus will not be implemented.
 * `scraperwiki.jsqlite`
 * `scraperwiki.metadata`
 * `scraperwiki.newsql`
+
+### Development
+
+Run tests with `./runtests`; this small wrapper cleans up after itself.
