@@ -22,5 +22,5 @@ class CPUTimeExceededError(Error):
     pass
 
 from .utils import log, scrape, pdftoxml, swimport
-import utils, sqlite
+import .utils, .sqlite
 __version__ = '0.0.1'
