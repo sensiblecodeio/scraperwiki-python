@@ -221,5 +221,25 @@ class TestSWImport(TestCase):
     csv2sw = scraperwiki.swimport('csv2sw')
     self.assertEquals(type(csv2sw.read.csv), type(lambda : None) )
 
+class TestImports(TestCase):
+  'Test that all module contents are imported.'
+  def setUp(self):
+    self.sw = __import__('scraperwiki')
+
+  def test_import_scraperwiki_root(self):
+    self.sw.scrape
+    self.sw.Error
+    self.sw.CPUTimeExceededError
+    
+  def test_import_scraperwiki_sqlite(self):
+    self.sw.sqlite
+    
+  def test_import_scraperwiki_utils(self):
+    self.sw.utils
+    
+  def test_import_scraperwiki_special_utils(self):
+    self.sw.pdftoxml
+    self.sw.dumpMessage
+    
 if __name__ == '__main__':
   main()
