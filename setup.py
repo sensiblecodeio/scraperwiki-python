@@ -19,6 +19,8 @@ import os
 from distutils.core import setup
 import scraperwiki
 
+import warnings
+
 def has_external_dependency(name):
     'Check that a non-Python dependency is installed.'
     for directory in os.environ['PATH'].split(':'):
@@ -27,10 +29,8 @@ def has_external_dependency(name):
     return False
 
 if not has_external_dependency('wget'):
-    raise ImportError(
-        'Local Scraperlibs requires wget because I\'m sloppy, but wget was not\n'
-        'found in the PATH. You probably need to install it.'
-    )
+    warnings.warn(
+        'wget not found: attach() and swimport() will not work.')
 
 if not has_external_dependency('pdftohtml'):
     raise ImportError(
