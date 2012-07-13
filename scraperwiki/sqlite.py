@@ -9,12 +9,14 @@ def _connect(dbname = 'scraperwiki.db'):
 
 _connect()
 
-def execute(sqlquery, data=None, verbose=1):
+def execute(sqlquery, data=[], verbose=1):
     """ Should return list of lists, but returns list of dicts """
     return dt.execute(sqlquery, *data, commit=False)
     # other way [ dict(zip(result["keys"], d))  for d in result["data"] ]
 
 def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
+    if not data:
+        return
     dt.create_table(data, table_name = table_name)
     if unique_keys != []:
         dt.create_index(table_name, unique_keys, unique = True, if_not_exists = True)
