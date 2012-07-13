@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU Affero Public License
 # along with Local Scraperlibs.  If not, see <http://www.gnu.org/licenses/>.
 
+import warnings
 import os
 from distutils.core import setup
 import scraperwiki
-
-import warnings
 
 def has_external_dependency(name):
     'Check that a non-Python dependency is installed.'
@@ -33,7 +32,7 @@ if not has_external_dependency('wget'):
         'wget not found: attach() and swimport() will not work.')
 
 if not has_external_dependency('pdftohtml'):
-    raise ImportError(
+    warnings.warn(
         'Local Scraperlibs requires pdftohtml, but pdftoxml was not found\n'
         'in the PATH. You probably need to install it.'
     )
