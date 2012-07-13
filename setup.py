@@ -18,7 +18,6 @@
 import warnings
 import os
 from distutils.core import setup
-import scraperwiki
 
 def has_external_dependency(name):
     'Check that a non-Python dependency is installed.'
@@ -52,7 +51,7 @@ setup(name='scraperwiki_local',
     ],
     packages=['scraperwiki'],
 
-    # From requests
-    version=scraperwiki.__version__,
+    version = '0.0.0',
     license='AGPL',
+    install_requires = open('requirements.txt').read().split('\n')[:-1],
    )
