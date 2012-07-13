@@ -9,7 +9,7 @@ def _connect(dbname = 'scraperwiki.db'):
 
 _connect()
 
-def execute(sqlquery, data=None, verbose=1):
+def execute(sqlquery, data=[], verbose=1):
     """ Should return list of lists, but returns list of dicts """
     return dt.execute(sqlquery, *data, commit=False)
     # other way [ dict(zip(result["keys"], d))  for d in result["data"] ]
