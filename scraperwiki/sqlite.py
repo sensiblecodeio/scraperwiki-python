@@ -15,6 +15,8 @@ def execute(sqlquery, data=None, verbose=1):
     # other way [ dict(zip(result["keys"], d))  for d in result["data"] ]
 
 def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
+    if not data:
+        return
     dt.create_table(data, table_name = table_name)
     if unique_keys != []:
         dt.create_index(table_name, unique_keys, unique = True, if_not_exists = True)
