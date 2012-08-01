@@ -3,16 +3,16 @@
 # This file is part of Local Scraperlibs.
 
 # Local Scraperlibs is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero Public License as published by
+# it under the terms of the GNU Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # Local Scraperlibs is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero Public License for more details.
+# GNU Public License for more details.
 
-# You should have received a copy of the GNU Affero Public License
+# You should have received a copy of the GNU Public License
 # along with Local Scraperlibs.  If not, see <http://www.gnu.org/licenses/>.
 
 import warnings
@@ -44,7 +44,7 @@ setup(name='scraperwiki_local',
     classifiers=[
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
+        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: SQL',
         'Topic :: Database :: Front-Ends',
@@ -52,6 +52,6 @@ setup(name='scraperwiki_local',
     packages=['scraperwiki'],
 
     version = '0.0.0',
-    license='AGPL',
+    license='GPL',
     install_requires = open('requirements.txt').read().split('\n')[:-1],
    )
