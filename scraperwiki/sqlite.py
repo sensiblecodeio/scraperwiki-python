@@ -17,7 +17,7 @@ def execute(sqlquery, data=[], verbose=1):
 def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
     if not data:
         return
-    dt.create_table(data, table_name = table_name)
+    dt.create_table(data, table_name = table_name, error_if_exists = False)
     if unique_keys != []:
         dt.create_index(table_name, unique_keys, unique = True, if_not_exists = True)
     return dt.insert(data, table_name = table_name)
