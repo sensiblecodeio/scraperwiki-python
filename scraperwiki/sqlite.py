@@ -19,7 +19,7 @@ def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
         return
     dt.create_table(data, table_name = table_name, error_if_exists = False)
     if unique_keys != []:
-        dt.create_index(table_name, unique_keys, unique = True, if_not_exists = True)
+        dt.create_index(unique_keys, table_name, unique = True, if_not_exists = True)
     return dt.insert(data, table_name = table_name)
    
 def attach(name, asname=None, verbose=1):

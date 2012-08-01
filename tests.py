@@ -113,9 +113,35 @@ class SaveAndSelect(TestDb):
     observed = scraperwiki.sqlite.select('* from swdata')[0]['foo']
     self.assertEqual(d, observed)
 
-#class TestSaveLambda(SaveAndSelect):
-#  def test_save_lambda(self):
-#    self.save_and_select(lambda x: x^2)
+class TestUniqueKeys(SaveAndSelect):
+  def test_empty(self):
+    scraperwiki.sqlite.save([], {"foo": 3}, u'Chico')
+    observed = scraperwiki.sqlite.execute(u'PRAGMA index_list(Chico)')
+    self.assertEqual(observed, None)
+
+  def test_two(self):
+    scraperwiki.sqlite.save(['foo', 'bar'], {"foo": 3, 'bar': 9}, u'Harpo')
+    observed = scraperwiki.sqlite.execute(u'PRAGMA index_info(Harpo_foo_bar)')
+
+    # Indexness
+    self.assertIsNotNone(observed)
+
+    # Indexed columns
+    expected = [
+      {u'seqno': 0, u'cid': 0, u'name': u'foo'},
+      {u'seqno': 1, u'cid': 1, u'name': u'bar'},
+    ]
+    self.assertListEqual(observed, expected)
+
+    # Uniqueness
+    indices = scraperwiki.sqlite.execute('PRAGMA index_list(Harpo)')
+    for index in indices:
+      if index[u'name'] == u'Harpo_foo_bar':
+        break
+    else:
+      index = {}
+
+    self.assertEqual(index[u'unique'], 1)
 
 class TestSaveBoolean(SaveAndCheck):
   def test_save_true(self):
