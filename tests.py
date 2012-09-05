@@ -11,7 +11,7 @@ import scraperwiki
 # This library
 
 class TestDb(TestCase):
-  DBNAME = 'scraperwiki.db'
+  DBNAME = 'scraperwiki.sqlite'
   def setUp(self):
     self.cleanUp()
     scraperwiki.sqlite._connect(self.DBNAME)
@@ -48,7 +48,7 @@ class TestSaveVar(TestDb):
     self.cursor=connection.cursor()
 
   def test_insert(self):
-    self.cursor.execute("SELECT key, value, type FROM `_dumptruckvars`")
+    self.cursor.execute("SELECT key, value, type FROM `swvariables`")
     observed = self.cursor.fetchall()
     expected = [("birthday", "November 30, 1888", "text",)]
     self.assertEqual(observed, expected)

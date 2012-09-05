@@ -2,10 +2,10 @@ from dumptruck import DumpTruck
 import re
 import os
 
-def _connect(dbname = 'scraperwiki.db'):
+def _connect(dbname = 'scraperwiki.sqlite'):
   'Initialize the database (again). This is mainly for testing'
   global dt
-  dt = DumpTruck(dbname = dbname)
+  dt = DumpTruck(dbname = dbname, vars_table = "swvariables")
 
 _connect()
 
