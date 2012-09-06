@@ -10,9 +10,14 @@ def _connect(dbname = 'scraperwiki.sqlite'):
 _connect()
 
 def execute(sqlquery, data=[], verbose=1):
-    """ Should return list of lists, but returns list of dicts """
-    return dt.execute(sqlquery, *data, commit=False)
-    # other way [ dict(zip(result["keys"], d))  for d in result["data"] ]
+    """ Mangles result to emulate scraperwiki as much as possible """
+    result = dt.execute(sqlquery, *data, commit=False)
+    # None (non-select) and empty list (select) results
+    if not result:
+        return {u'data': [], u'keys': []}
+    # Select statement with results
+    return {u'data': map(lambda row: row.values(), result),
+            u'keys': result[0].keys()}
 
 def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
     if not data:
@@ -21,7 +26,7 @@ def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
     if unique_keys != []:
         dt.create_index(unique_keys, table_name, unique = True, if_not_exists = True)
     return dt.insert(data, table_name = table_name)
-   
+
 def attach(name, asname=None, verbose=1):
     "This somehow downloads the database from scraperwiki."
     if asname == None:

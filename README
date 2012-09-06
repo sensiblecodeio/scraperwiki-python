@@ -35,7 +35,8 @@ Bizarre table and column names are supported.
 
 Dates and datetimes are stored in a different standard format.
 
-`scraperwiki.sqlite.execute` returns lists of dictionaries.
+`scraperwiki.sqlite.execute` will return an empty list of keys on an
+empty select statement result.
 
 `scraperwiki.sqlite.attach` downloads the whole datastore from ScraperWiki,
 So you might not want to use this too often on large databases.

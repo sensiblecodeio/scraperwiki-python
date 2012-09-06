@@ -117,7 +117,7 @@ class TestUniqueKeys(SaveAndSelect):
   def test_empty(self):
     scraperwiki.sqlite.save([], {"foo": 3}, u'Chico')
     observed = scraperwiki.sqlite.execute(u'PRAGMA index_list(Chico)')
-    self.assertEqual(observed, None)
+    self.assertEqual(observed, {u'data': [], u'keys': []})
 
   def test_two(self):
     scraperwiki.sqlite.save(['foo', 'bar'], {"foo": 3, 'bar': 9}, u'Harpo')
@@ -127,21 +127,26 @@ class TestUniqueKeys(SaveAndSelect):
     self.assertIsNotNone(observed)
 
     # Indexed columns
-    expected = [
-      {u'seqno': 0, u'cid': 0, u'name': u'foo'},
-      {u'seqno': 1, u'cid': 1, u'name': u'bar'},
-    ]
-    self.assertListEqual(observed, expected)
+    expected = {
+      'keys': [u'seqno', u'cid', u'name'],
+      'data':[
+        [0, 0, u'foo'],
+        [1, 1, u'bar'],
+      ]
+    }
+    self.assertDictEqual(observed, expected)
 
     # Uniqueness
     indices = scraperwiki.sqlite.execute('PRAGMA index_list(Harpo)')
-    for index in indices:
-      if index[u'name'] == u'Harpo_foo_bar':
+    namecol = indices[u"keys"].index(u'name')
+    for index in indices[u"data"]:
+      if index[namecol] == u'Harpo_foo_bar':
         break
     else:
       index = {}
 
-    self.assertEqual(index[u'unique'], 1)
+    uniquecol = indices[u"keys"].index(u'unique')
+    self.assertEqual(index[uniquecol], 1)
 
 class TestSaveBoolean(SaveAndCheck):
   def test_save_true(self):
