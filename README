@@ -50,7 +50,6 @@ In general, features that have not been implemented raise a `NotImplementedError
 
 * Data argument to `scraperwiki.sqlite.select`
 * All of the `verbose` keyword arguments (These control what is printed on the ScraperWiki code editor)
-* `scraperwiki.sqlite.show_tables` only works for the main database is implemented.
 
 ### Geo
 The UK geocoding helpers have not been implemented

@@ -40,9 +40,10 @@ def select(sqlquery, data=None, verbose=1):
         raise NotImplementedError('Dunno what that data argument does')
 
 def show_tables(dbname=""):
-    if dbname != '':
-        raise NotImplementedError('Only the main database is implemented')
-    response = select('name, sql from sqlite_master where type = "table";')
+    name = "sqlite_master"
+    if dbname:
+        name = "`%s`.%s" % (dbname, name)
+    response = select('name, sql from %s where type = "table";' % name)
     return {row['name']: row['sql'] for row in response}
 
 def save_var(name, value, verbose=2):
