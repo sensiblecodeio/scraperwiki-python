@@ -25,7 +25,7 @@ def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
 def attach(name, asname=None, verbose=1):
     "This somehow downloads the database from scraperwiki."
     if asname == None:
-        asname = re.sub(r'[^a-zA-Z]', '', name)
+        asname = name
     os.system('wget -O %s https://scraperwiki.com/scrapers/export_sqlite/%s' % (asname, name))
     dt.execute('attach {0} AS {0}'.format(asname), commit = False)
 
