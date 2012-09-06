@@ -49,7 +49,6 @@ In general, features that have not been implemented raise a `NotImplementedError
 ### Datastore
 `scraperwiki.sqlite` is missing the following features.
 
-* Data argument to `scraperwiki.sqlite.select`
 * All of the `verbose` keyword arguments (These control what is printed on the ScraperWiki code editor)
 
 ### Geo

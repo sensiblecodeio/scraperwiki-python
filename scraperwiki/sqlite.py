@@ -10,8 +10,8 @@ def _connect(dbname = 'scraperwiki.sqlite'):
 _connect()
 
 def execute(sqlquery, data=[], verbose=1):
-    """ Mangles result to emulate scraperwiki as much as possible """
-    result = dt.execute(sqlquery, *data, commit=False)
+    """ Emulate scraperwiki as much as possible by mangling dumptruck result """
+    result = dt.execute(sqlquery, data, commit=False)
     # None (non-select) and empty list (select) results
     if not result:
         return {u'data': [], u'keys': []}
@@ -37,12 +37,9 @@ def attach(name, asname=None, verbose=1):
 def commit(verbose=1):
     dt.commit()
 
-def select(sqlquery, data=None, verbose=1):
+def select(sqlquery, data=[], verbose=1):
     sqlquery = "select %s" % sqlquery   # maybe check if select or another command is there already?
-    if data == None:
-        return dt.execute(sqlquery, commit = False)
-    else:
-        raise NotImplementedError('Dunno what that data argument does')
+    return dt.execute(sqlquery, data, commit = False)
 
 def show_tables(dbname=""):
     name = "sqlite_master"
