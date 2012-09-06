@@ -40,10 +40,6 @@ Dates and datetimes are stored in a different standard format.
 `scraperwiki.sqlite.attach` downloads the whole datastore from ScraperWiki,
 So you might not want to use this too often on large databases.
 
-`scraperwiki.sqlite.get_var` and `scraperwiki.sqlite.save_var`
-store their data in the table `swvariables`, and they use
-a slightly different format.
-
 ### Other Differences
 
 ## Status of implementation
