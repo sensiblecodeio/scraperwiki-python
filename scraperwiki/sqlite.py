@@ -1,4 +1,5 @@
 from dumptruck import DumpTruck
+import datetime
 import re
 import os
 
@@ -15,8 +16,9 @@ def execute(sqlquery, data=[], verbose=1):
     # None (non-select) and empty list (select) results
     if not result:
         return {u'data': [], u'keys': []}
+    dtos = lambda d: str(d) if isinstance(d, datetime.date) else d
     # Select statement with results
-    return {u'data': map(lambda row: row.values(), result),
+    return {u'data': map(lambda row: map(dtos, row.values()), result),
             u'keys': result[0].keys()}
 
 def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
@@ -39,7 +41,15 @@ def commit(verbose=1):
 
 def select(sqlquery, data=[], verbose=1):
     sqlquery = "select %s" % sqlquery   # maybe check if select or another command is there already?
-    return dt.execute(sqlquery, data, commit = False)
+    result = dt.execute(sqlquery, data, commit = False)
+    # Convert dates to strings to conform to scraperwiki classic
+    if result != []:
+      keys = result[0].keys()
+      for row in result:
+        for key in keys:
+          if isinstance(row[key], datetime.date):
+            row[key] = str(row[key])
+    return result
 
 def show_tables(dbname=""):
     name = "sqlite_master"

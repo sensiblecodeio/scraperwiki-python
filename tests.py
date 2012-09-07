@@ -35,7 +35,7 @@ class TestSaveGetVar(TestDb):
   def test_string(self):
     self.savegetvar("asdio")
   
-  def test_string(self):
+  def test_int(self):
     self.savegetvar(1)
 
   def test_list(self):
@@ -43,6 +43,14 @@ class TestSaveGetVar(TestDb):
 
   def test_dict(self):
     self.savegetvar({"abc":"def"})
+
+  def test_date(self):
+    date1 = datetime.datetime.now()
+    date2 = datetime.date.today()
+    scraperwiki.sqlite.save_var("weird", date1)
+    self.assertEqual(scraperwiki.sqlite.get_var("weird"), date1)
+    scraperwiki.sqlite.save_var("weird", date2)
+    self.assertEqual(scraperwiki.sqlite.get_var("weird"), date2)
 
 class TestSaveVar(TestDb):
   def setUp(self):
@@ -186,20 +194,6 @@ class TestSave(SaveAndCheck):
     , [(u'LeTourneau',)]
     )
 
-  def test_save_date(self):
-    self.save_and_check(
-      {"birthday":datetime.datetime.strptime('1990-03-30', '%Y-%m-%d').date()}
-    , "birthdays"
-    , [(u'1990-03-30',)]
-    )
-
-  def test_save_datetime(self):
-    self.save_and_check(
-      {"birthday":datetime.datetime.strptime('1990-03-30', '%Y-%m-%d')}
-    , "birthdays"
-    , [(u'1990-03-30 00:00:00',)]
-    )
-  
   def test_save_twice(self):
     self.save_and_check(
       {"modelNumber": 293}
@@ -251,6 +245,30 @@ class TestAttach(TestDb):
   def tearDown(self):
     super(TestAttach, self).tearDown()
     os.system('rm hsphfaculty')
+
+class TestDateTime(TestDb):
+
+  def rawdate(self, table="swdata", column="datetime"):
+    connection=sqlite3.connect(self.DBNAME)
+    cursor=connection.cursor()
+    cursor.execute("SELECT %s FROM %s LIMIT 1" % (column, table))
+    rawdate = cursor.fetchall()[0][0]
+    connection.close()
+    return rawdate
+   
+  def test_save_date(self):
+    d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d').date()
+    scraperwiki.sqlite.save([], {"birthday":d})
+    self.assertEqual(str(d), self.rawdate(column="birthday"))
+    self.assertEqual([{u'birthday':str(d)}], scraperwiki.sqlite.select("* from swdata"))
+    self.assertEqual({u'keys': [u'birthday'], u'data': [[str(d)]]}, scraperwiki.sqlite.execute("select * from swdata"))
+
+  def test_save_datetime(self):
+    d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d')
+    scraperwiki.sqlite.save([], {"birthday":d})
+    self.assertEqual(str(d), self.rawdate(column="birthday"))
+    self.assertEqual([{u'birthday':str(d)}], scraperwiki.sqlite.select("* from swdata"))
+    self.assertEqual({u'keys': [u'birthday'], u'data': [[str(d)]]}, scraperwiki.sqlite.execute("select * from swdata"))
 
 class TestSWImport(TestCase):
   def test_csv2sw(self):
