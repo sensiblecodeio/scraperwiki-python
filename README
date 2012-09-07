@@ -33,8 +33,6 @@ Data is stored to a local sqlite database named `scraperwiki.sqlite`.
 
 Bizarre table and column names are supported.
 
-Dates and datetimes are stored in a different standard format.
-
 `scraperwiki.sqlite.execute` will return an empty list of keys on an
 empty select statement result.
 
