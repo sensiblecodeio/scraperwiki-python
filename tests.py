@@ -32,13 +32,17 @@ class SaveGetVar(TestDb):
     scraperwiki.sqlite.save_var("weird", var)
     self.assertEqual(scraperwiki.sqlite.get_var("weird"), var)
 
-class TestSaveGetList(SaveGetVar):
-  def test_list(self):
-    self.savegetvar([])
+  def test_string(self):
+    self.savegetvar("asdio")
+  
+  def test_string(self):
+    self.savegetvar(1)
 
-class TestSaveGetDict(SaveGetVar):
+  def test_list(self):
+    self.savegetvar([1,2,3,4])
+
   def test_dict(self):
-    self.savegetvar({})
+    self.savegetvar({"abc":"def"})
 
 class TestSaveVar(TestDb):
   def setUp(self):
@@ -148,22 +152,39 @@ class TestUniqueKeys(SaveAndSelect):
     uniquecol = indices[u"keys"].index(u'unique')
     self.assertEqual(index[uniquecol], 1)
 
-class TestSaveBoolean(SaveAndCheck):
-  def test_save_true(self):
+class TestMultipleColumns(SaveAndSelect):
+  def test_save(self):
+    self.save_and_select({"firstname":"Robert","lastname":"LeTourneau"})
+
+class TestSave(SaveAndCheck):
+  def test_save_int(self):
     self.save_and_check(
-      {"a": True}
-    , "a"
-    , [(1,)]
+      {"model-number": 293}
+    , "model-numbers"
+    , [(293,)]
     )
 
-  def test_save_true(self):
+  def test_save_string(self):
     self.save_and_check(
-      {"a": False}
-    , "a"
-    , [(0,)]
+      {"lastname":"LeTourneau"}
+    , "diesel-engineers"
+    , [(u'LeTourneau',)]
     )
 
-class TestSaveTwice(SaveAndCheck):
+  def test_save_date(self):
+    self.save_and_check(
+      {"birthday":datetime.datetime.strptime('1990-03-30', '%Y-%m-%d').date()}
+    , "birthdays"
+    , [(u'1990-03-30',)]
+    )
+
+  def test_save_datetime(self):
+    self.save_and_check(
+      {"birthday":datetime.datetime.strptime('1990-03-30', '%Y-%m-%d')}
+    , "birthdays"
+    , [(u'1990-03-30 00:00:00',)]
+    )
+  
   def test_save_twice(self):
     self.save_and_check(
       {"modelNumber": 293}
@@ -176,50 +197,19 @@ class TestSaveTwice(SaveAndCheck):
     , [(293,), (293,)]
     , twice = False
     )
-
-class TestSaveInt(SaveAndCheck):
-  def test_save(self):
+  
+  def test_save_true(self):
     self.save_and_check(
-      {"modelNumber": 293}
-    , "model-numbers"
-    , [(293,)]
+      {"a": True}
+    , "a"
+    , [(1,)]
     )
 
-
-class TestMultipleColumns(SaveAndSelect):
-  def test_save(self):
-    self.save_and_select({"firstname":"Robert","lastname":"LeTourneau"})
-
-class TestSaveHyphen(SaveAndCheck):
-  def test_save_int(self):
+  def test_save_true(self):
     self.save_and_check(
-      {"model-number": 293}
-    , "model-numbers"
-    , [(293,)]
-    )
-
-class TestSaveString(SaveAndCheck):
-  def test_save(self):
-    self.save_and_check(
-      {"lastname":"LeTourneau"}
-    , "diesel-engineers"
-    , [(u'LeTourneau',)]
-    )
-
-class TestSaveDate(SaveAndCheck):
-  def test_save(self):
-    self.save_and_check(
-      {"birthday":datetime.datetime.strptime('1990-03-30', '%Y-%m-%d').date()}
-    , "birthdays"
-    , [(u'1990-03-30',)]
-    )
-
-class TestSaveDateTime(SaveAndCheck):
-  def test_save(self):
-    self.save_and_check(
-      {"birthday":datetime.datetime.strptime('1990-03-30', '%Y-%m-%d')}
-    , "birthdays"
-    , [(u'1990-03-30 00:00:00',)]
+      {"a": False}
+    , "a"
+    , [(0,)]
     )
 
 class TestAttach(TestDb):
