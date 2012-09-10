@@ -50,9 +50,7 @@ In general, features that have not been implemented raise a `NotImplementedError
 * All of the `verbose` keyword arguments (These control what is printed on the ScraperWiki code editor)
 
 ### Geo
-The UK geocoding helpers have not been implemented
-
-* `scraperwiki.geo`
+The UK geocoding helpers (`scraperwiki.geo`) documented on scraperwiki.com have been implemented. They partially depend on scraperwiki.com being available.
 
 <!-- They have also been released as a separate library (ukgeo). Not true yet. -->
 
