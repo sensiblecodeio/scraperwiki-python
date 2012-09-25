@@ -176,6 +176,23 @@ class TestUniqueKeys(SaveAndSelect):
     uniquecol = indices[u"keys"].index(u'unique')
     self.assertEqual(index[uniquecol], 1)
 
+class Nest(SaveAndCheck):
+  'This needs to be verified with actual ScraperWiki.'
+  def _casting(self, thething):
+    self.save_and_check(
+      {"almonds": thething},
+      'almonds',
+      [(repr(thething),)]
+    )
+
+class TestList(Nest):
+  def test_list(self):
+    self._casting(['a', 'b', 'c'])
+
+class TestDict(Nest):
+  def test_dict(self):
+    self._casting({'a': 3, 5:'b', 'c': []})
+
 class TestMultipleColumns(SaveAndSelect):
   def test_save(self):
     self.save_and_select({"firstname":"Robert","lastname":"LeTourneau"})
