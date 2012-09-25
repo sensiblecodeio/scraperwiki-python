@@ -6,7 +6,7 @@ import os
 def _connect(dbname = 'scraperwiki.sqlite'):
   'Initialize the database (again). This is mainly for testing'
   global dt
-  dt = DumpTruck(dbname = dbname, vars_table = "swvariables")
+  dt = DumpTruck(dbname = dbname)
 
 _connect()
 
@@ -59,10 +59,21 @@ def show_tables(dbname=""):
     return {row['name']: row['sql'] for row in response}
 
 def save_var(name, value, verbose=2):
-    return dt.save_var(name, value)
+    data = dt.save_var(name, value)
+    dt.execute(u"CREATE TABLE IF NOT EXISTS swvariables (`value_blob` blob, `type` text, `name` text PRIMARY KEY)", commit = False)
+    dt.execute(u'INSERT OR REPLACE INTO swvariables SELECT `value`, `type`, `key` FROM `%s`' % dt._DumpTruck__vars_table, commit = False)
+    dt.execute(u'DROP TABLE `%s`' % dt._DumpTruck__vars_table, commit = False)
+    dt.commit()
+    return data
 
 def get_var(name, default=None, verbose=2):
+    dt.execute(u"CREATE TABLE %s (`value` blob, `type` text, `key` text PRIMARY KEY)" % dt._DumpTruck__vars_table, commit = False)
+    dt.execute(u'INSERT INTO %s SELECT `value_blob`, `type`, `name` FROM `swvariables`' % dt._DumpTruck__vars_table, commit = False)
     try:
         return dt.get_var(name)
     except NameError:
+        dt.connection.rollback()
         return default
+    else:
+        dt.execute(u'DROP TABLE `%s`' % dt._DumpTruck__vars_table, commit = False)
+        dt.commit()
