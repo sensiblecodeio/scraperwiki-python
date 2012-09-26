@@ -67,6 +67,9 @@ def save_var(name, value, verbose=2):
     return data
 
 def get_var(name, default=None, verbose=2):
+    if 'swvariables' not in show_tables():
+        return default
+
     dt.execute(u"CREATE TABLE %s (`value` blob, `type` text, `key` text PRIMARY KEY)" % dt._DumpTruck__vars_table, commit = False)
     dt.execute(u'INSERT INTO %s SELECT `value_blob`, `type`, `name` FROM `swvariables`' % dt._DumpTruck__vars_table, commit = False)
     try:
