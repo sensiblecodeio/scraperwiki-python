@@ -52,7 +52,7 @@ setup(name='scraperwiki_local',
         'Programming Language :: SQL',
         'Topic :: Database :: Front-Ends',
     ],
-    packages=['scraperwiki'],
+    packages=['scraperwiki', 'scraperwiki.geo'],
 
     version = '0.0.3',
     license='GPL',
