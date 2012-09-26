@@ -6,6 +6,8 @@ into a local SQLite database; a targeted bombing of ScraperWiki's servers
 will not stop this local library from working, unless you happen to be running
 it on one of ScraperWiki's servers.
 
+**This is no longer the canonical repository**; use [this one](https://github.com/scraperwiki/dumptruck).
+
 ## Installing
 
 This will soon be in PyPI, but for now you can just install from the git repository.
