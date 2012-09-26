@@ -53,6 +53,11 @@ class TestSaveGetVar(TestDb):
     scraperwiki.sqlite.save_var("weird", date2)
     self.assertEqual(scraperwiki.sqlite.get_var("weird"), date2)
 
+class TestGetNonexistantVar(TestDb):
+  def test_get(self):
+    self.assertIsNone(scraperwiki.sqlite.get_var('meatball'))
+
+
 class TestSaveVar(TestDb):
   def setUp(self):
     super(TestSaveVar, self).setUp()
