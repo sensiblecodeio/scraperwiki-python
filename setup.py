@@ -36,6 +36,9 @@ if not has_external_dependency('pdftohtml'):
         'in the PATH. You probably need to install it.'
     )
 
+# requires = open('requirements.txt').read().split('\n')[:-1]
+requires = ['dumptruck==0.0.6']
+
 setup(name='scraperwiki_local',
     author='Thomas Levine',
     author_email='thomas@scraperwiki.com',
@@ -53,5 +56,5 @@ setup(name='scraperwiki_local',
 
     version = '0.0.3',
     license='GPL',
-    install_requires = open('requirements.txt').read().split('\n')[:-1],
+    install_requires = requires,
    )
