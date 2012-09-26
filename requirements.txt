@@ -1,1 +1,1 @@
-dumptruck==0.0.5
+dumptruck==0.0.6

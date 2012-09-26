@@ -51,7 +51,7 @@ setup(name='scraperwiki_local',
     ],
     packages=['scraperwiki'],
 
-    version = '0.0.0',
+    version = '0.0.3',
     license='GPL',
     install_requires = open('requirements.txt').read().split('\n')[:-1],
    )
