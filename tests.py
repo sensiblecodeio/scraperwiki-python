@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 from unittest import TestCase, main
 from json import loads, dumps
 import sqlite3
@@ -243,6 +243,25 @@ class TestSave(SaveAndCheck):
     , "a"
     , [(0,)]
     )
+
+class TestQuestionMark(TestDb):
+  def test_one_question_mark_with_nonlist(self):
+    scraperwiki.sqlite.execute('create table zhuozi (a text);')
+    scraperwiki.sqlite.execute('insert into zhuozi values (?)', 'apple')
+    observed = scraperwiki.sqlite.select('* from zhuozi')
+    self.assertListEqual(observed, [{'a': 'apple'}])
+
+  def test_one_question_mark_with_list(self):
+    scraperwiki.sqlite.execute('create table zhuozi (a text);')
+    scraperwiki.sqlite.execute('insert into zhuozi values (?)', ['apple'])
+    observed = scraperwiki.sqlite.select('* from zhuozi')
+    self.assertListEqual(observed, [{'a': 'apple'}])
+
+  def test_multiple_question_marks(self):
+    scraperwiki.sqlite.execute('create table zhuozi (a text, b text);')
+    scraperwiki.sqlite.execute('insert into zhuozi values (?, ?)', ['apple', 'banana'])
+    observed = scraperwiki.sqlite.select('* from zhuozi')
+    self.assertListEqual(observed, [{'a': 'apple', 'b': 'banana'}])
 
 class TestAttach(TestDb):
   def hsph(self):
