@@ -12,6 +12,10 @@ _connect()
 
 def execute(sqlquery, data=[], verbose=1):
     """ Emulate scraperwiki as much as possible by mangling dumptruck result """
+    # Allow for a non-list to be passed as data.
+    if type(data) != list:
+        data = [data]
+
     result = dt.execute(sqlquery, data, commit=False)
     # None (non-select) and empty list (select) results
     if not result:
