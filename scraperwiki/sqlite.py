@@ -71,10 +71,10 @@ def save_var(name, value, verbose=2):
     return data
 
 def get_var(name, default=None, verbose=2):
-    if 'swvariables' not in show_tables():
+    if 'swvariables' not in show_tables(): # this should be unecessary
         return default
-
-    dt.execute(u"CREATE TABLE %s (`value` blob, `type` text, `key` text PRIMARY KEY)" % dt._DumpTruck__vars_table, commit = False)
+    dt.execute(u"CREATE TABLE IF NOT EXISTS swvariables (`value_blob` blob, `type` text, `name` text PRIMARY KEY)", commit = False)
+    dt.execute(u"CREATE TEMPORARY TABLE IF NOT EXISTS %s (`value` blob, `type` text, `key` text PRIMARY KEY)" % dt._DumpTruck__vars_table, commit = False)
     dt.execute(u'INSERT INTO %s SELECT `value_blob`, `type`, `name` FROM `swvariables`' % dt._DumpTruck__vars_table, commit = False)
     try:
         return dt.get_var(name)
