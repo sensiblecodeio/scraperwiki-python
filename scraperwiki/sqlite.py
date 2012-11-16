@@ -31,7 +31,7 @@ def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
     dt.create_table(data, table_name = table_name, error_if_exists = False)
     if unique_keys != []:
         dt.create_index(unique_keys, table_name, unique = True, if_not_exists = True)
-    return dt.insert(data, table_name = table_name)
+    return dt.upsert(data, table_name = table_name)
 
 def attach(name, asname=None, verbose=1):
     "This somehow downloads the database from scraperwiki."
