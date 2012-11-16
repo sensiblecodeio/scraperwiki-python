@@ -24,7 +24,7 @@ if not has_external_dependency('pdftohtml'):
     )
 
 # requires = open('requirements.txt').read().split('\n')[:-1]
-requires = ['dumptruck==0.0.6']
+requires = ['dumptruck==0.1.0']
 
 setup(name='scraperwiki_local',
     author='Thomas Levine',
@@ -41,7 +41,7 @@ setup(name='scraperwiki_local',
     ],
     packages=['scraperwiki', 'scraperwiki.geo'],
 
-    version = '0.0.3',
+    version = '0.0.5',
     license='GPL',
     install_requires = requires,
    )
