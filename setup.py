@@ -41,7 +41,7 @@ setup(name='scraperwiki_local',
     ],
     packages=['scraperwiki', 'scraperwiki.geo'],
 
-    version = '0.0.5',
+    version = '0.0.6',
     license='GPL',
     install_requires = requires,
    )
