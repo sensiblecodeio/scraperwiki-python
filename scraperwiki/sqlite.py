@@ -37,7 +37,10 @@ def attach(name, asname=None, verbose=1):
     "This somehow downloads the database from scraperwiki."
     if asname == None:
         asname = name
-    os.system('wget -O %s https://scraperwiki.com/scrapers/export_sqlite/%s' % (asname, name))
+    if not os.path.isfile("%s"%asname):
+        print "#### one time import of %s database"
+        os.system('wget -O %s https://scraperwiki.com/scrapers/export_sqlite/%s/' % (asname, name))
+    
     dt.execute('attach {0} AS {0}'.format(asname), commit = False)
 
 def commit(verbose=1):
