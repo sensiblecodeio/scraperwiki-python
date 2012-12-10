@@ -6,7 +6,7 @@ import os
 def _connect(dbname = 'scraperwiki.sqlite'):
   'Initialize the database (again). This is mainly for testing'
   global dt
-  dt = DumpTruck(dbname = dbname)
+  dt = DumpTruck(dbname = dbname,  adapt_and_convert = False)
 
 _connect()
 

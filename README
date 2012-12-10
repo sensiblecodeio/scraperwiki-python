@@ -36,8 +36,7 @@ Bizarre table and column names are supported.
 `scraperwiki.sqlite.execute` will return an empty list of keys on an
 empty select statement result.
 
-`scraperwiki.sqlite.attach` downloads the whole datastore from ScraperWiki,
-So you might not want to use this too often on large databases.
+`scraperwiki.sqlite.attach` downloads the whole datastore from ScraperWiki, the first time it runs; it then uses the cached database
 
 ### Other Differences
 
