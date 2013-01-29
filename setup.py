@@ -30,7 +30,7 @@ setup(name='scraperwiki_local',
     author='Thomas Levine',
     author_email='thomas@scraperwiki.com',
     description='Local version of scraperwiki scraperlibs',
-    url='https://github.com/tlevine/scraperwiki_local',
+    url='https://github.com/scraperwiki/scraperwiki_local',
     classifiers=[
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
