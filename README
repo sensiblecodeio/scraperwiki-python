@@ -77,7 +77,7 @@ Run tests with `./runtests`; this small wrapper cleans up after itself.
 ### Specs
 Here are some ScraperWiki scrapers that demonstrate the non-local library's quirks.
 
-https://scraperwiki.com/scrapers/scraperwiki_local/
+https://scraperwiki.com/scrapers/scraperwiki-python/
 https://scraperwiki.com/scrapers/cast/
 https://scraperwiki.com/scrapers/things_happen_when_you_do_not_commit/
 https://scraperwiki.com/scrapers/what_does_show_tables_return/

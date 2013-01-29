@@ -26,11 +26,11 @@ if not has_external_dependency('pdftohtml'):
 # requires = open('requirements.txt').read().split('\n')[:-1]
 requires = ['dumptruck==0.1.0']
 
-setup(name='scraperwiki_local',
+setup(name='scraperwiki',
     author='Thomas Levine',
     author_email='thomas@scraperwiki.com',
     description='Local version of scraperwiki scraperlibs',
-    url='https://github.com/scraperwiki/scraperwiki_local',
+    url='https://github.com/scraperwiki/scraperwiki-python',
     classifiers=[
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
