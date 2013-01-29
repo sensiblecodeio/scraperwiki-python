@@ -29,7 +29,7 @@ requires = ['dumptruck==0.1.0']
 setup(name='scraperwiki',
     author='Thomas Levine',
     author_email='thomas@scraperwiki.com',
-    description='Local version of scraperwiki scraperlibs',
+    description='Local version of ScraperWiki libraries',
     url='https://github.com/scraperwiki/scraperwiki-python',
     classifiers=[
         'Intended Audience :: Developers',
@@ -41,7 +41,7 @@ setup(name='scraperwiki',
     ],
     packages=['scraperwiki', 'scraperwiki.geo'],
 
-    version = '0.1.0',
+    version = '0.2.0',
     license='GPL',
     install_requires = requires,
    )
