@@ -33,6 +33,51 @@ def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
         dt.create_index(unique_keys, table_name, unique = True, if_not_exists = True)
     return dt.upsert(data, table_name = table_name)
 
+def export_csv(data=[], table_name="swdata",file_name="swdata.csv"):
+    """ Exports a list of dicts to csv. Defaults to all data in the default table 'swdata'"""
+    import csv
+    import cStringIO
+    import codecs
+    class UnicodeWriter:
+        """A CSV writer which will write rows to CSV file "f",
+        which is encoded in the given encoding.
+        From here: https://gist.github.com/1174811
+        and here: http://stackoverflow.com/questions/8050631/encoding-data-of-mixed-type
+        """
+
+        def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
+            # Redirect output to a queue
+            self.queue = cStringIO.StringIO()
+            self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
+            self.stream = f
+            self.encoder = codecs.getincrementalencoder(encoding)()
+
+        def writerow(self, row):
+            self.writer.writerow([s.encode("utf-8") if isinstance(s, unicode) else s for s in row])
+            # Fetch UTF-8 output from the queue ...
+            data = self.queue.getvalue()
+            data = data.decode("utf-8")
+            # ... and reencode it into the target encoding
+            data = self.encoder.encode(data)
+            # write to the target stream
+            self.stream.write(data)
+            # empty queue
+            self.queue.truncate(0)
+
+        def writerows(self, rows):
+            for row in rows:
+                self.writerow(row)
+
+    if data == []:
+        data = select("* from swdata")
+    with open(file_name, 'wb') as f:
+        headers = sorted([k for k, v in data[0].items()])
+        csv_data = [headers]
+        for d in data:
+            csv_data.append([d[h] for h in headers])
+        writer = UnicodeWriter(f)
+        writer.writerows(csv_data)
+
 def attach(name, asname=None, verbose=1):
     "This somehow downloads the database from scraperwiki."
     if asname == None:
@@ -40,7 +85,7 @@ def attach(name, asname=None, verbose=1):
     if not os.path.isfile("%s"%asname):
         print "#### one time import of %s database"
         os.system('wget -O %s https://scraperwiki.com/scrapers/export_sqlite/%s/' % (asname, name))
-    
+
     dt.execute('attach {0} AS {0}'.format(asname), commit = False)
 
 def commit(verbose=1):
