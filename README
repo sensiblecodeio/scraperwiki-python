@@ -44,9 +44,8 @@ empty select statement result.
 In general, features that have not been implemented raise a `NotImplementedError`.
 
 ### Datastore
-`scraperwiki.sqlite` is missing the following features.
-
-* All of the `verbose` keyword arguments (These control what is printed on the ScraperWiki code editor)
+`scraperwiki.sqlite` may implement some less explored features
+of its API slightly differently from ScraperWiki.
 
 ### Geo
 The UK geocoding helpers (`scraperwiki.geo`) documented on scraperwiki.com have been implemented. They partially depend on scraperwiki.com being available.
