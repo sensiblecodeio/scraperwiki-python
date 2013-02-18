@@ -24,8 +24,8 @@ if not has_external_dependency('pdftohtml'):
     )
 
 setup(name='scraperwiki',
-    author='Thomas Levine',
-    author_email='thomas@scraperwiki.com',
+    author='Francis Irving',
+    author_email='francis@scraperwiki.com',
     description='Local version of ScraperWiki libraries',
     url='https://github.com/scraperwiki/scraperwiki-python',
     classifiers=[
@@ -38,7 +38,7 @@ setup(name='scraperwiki',
     ],
     packages=['scraperwiki', 'scraperwiki.geo'],
 
-    version = '0.2.0',
+    version = '0.2.1',
     license='GPL',
     install_requires = ['dumptruck>=0.1.1'],
    )
