@@ -1,0 +1,149 @@
+<h2>ScraperWiki library</h3>
+
+<p>This is a Python library for scraping web pages and saving data. 
+It is the easiest way to save data on the ScraperWiki platform, and it
+can also be used locally or on your own servers.
+</p>
+
+<h3>Installing</h3>
+
+<code>pip install scraperwiki</code>
+
+<h3>Scraping</h3>
+
+<dl>
+<dt>scraperwiki.<strong>scrape</strong>(url[, params][,user_agent])</dt>
+    <dd><p>Returns the downloaded string from the given url.</p>
+    <p><var>params</var> are sent as a POST if set.</p>
+    <p><var>user_agent</var> sets the user-agent string if provided.</p>
+    </dd>
+</dl>
+
+
+<h3><span id="sql"></span>Datastore (SQLite)</h3>
+
+<p>ScraperWiki provides a fully-fledged SQLite database for each scraper which
+you can save to.  You can read the data back that has been committed by other
+scrapers, or extract it <a href="/docs/api">through the API</a>. 
+</p>
+<p>See SQLite's <a href="http://www.sqlite.org/lang.html">SQL as understood by
+SQLite</a> for the query language.  
+</p>
+
+<dl>
+<dt>scraperwiki.<strong>sqlite.save</strong>(unique_keys, data[, table_name="swdata", verbose=2])</dt>
+    <dd><p>Saves a data record into the datastore into the table given
+    by <var>table_name</var>.</p>
+    <p>data is a dict object with field names as keys;
+    <var>unique_keys</var> is a subset
+        of data.keys() which determines when a record is
+        overwritten.</p>
+    <p>For large numbers of records data can be a list of dicts.</p>
+    <p><var>verbose</var> alters what is shown in the <var>Data</var> tab
+    of the editor.</p>
+    </dd>
+
+<dt>scraperwiki.<strong>sqlite.execute</strong>(sql[, vars], verbose=1)</dt>
+    <dd><p>Executes any arbitrary sqlite command. For
+    example create, delete, insert or drop.</p>
+    <p><var>vars</var> is an optional list of parameters, inserted when
+    the select command contains &lsquo;?&rsquo;s.
+    For example:</p>
+    <code>scraperwiki.sqlite.execute("insert into swdata values (?,?,?)", [a,b,c])</code>
+    <p>The &lsquo;?&rsquo; convention is like "paramstyle qmark"
+    from <a href="http://www.python.org/dev/peps/pep-0249/">Python's
+    DB API 2.0</a> (but note that the API to the datastore is
+    nothing like Python's DB API).  In particular the
+    &lsquo;?&rsquo; does not itself need quoting, and can in
+    general only be used where a literal would appear.
+    </p>
+    </dd>
+
+<dt>scraperwiki.<strong>sqlite.select</strong>(sqlfrag[, vars], verbose=1)</dt>
+    <dd><p>Executes a select command on the datastore.  For example:</p>
+    <code>scraperwiki.sqlite.select("* from swdata limit 10")</code>
+    <p>Returns a list of dicts that have been selected.</p>
+    <p><var>vars</var> is an optional list of parameters, inserted when the
+    select command contains &lsquo;?&rsquo;s.  This is like the
+    feature in the <var>.execute</var> command, above.</p>
+    </dd>
+
+<dt>scraperwiki.<strong>sqlite.commit</strong>()</dt>
+    <dd>Commits to the file after a series of execute commands.  (sqlite.save auto-commits after every action).
+    </dd>
+
+<dt>scraperwiki.<strong>sqlite.show_tables</strong>([dbname])</dt>
+    <dd>Returns an array of tables and their schemas in either the current or an attached database.</dd>
+
+<dt>scraperwiki.<strong>sqlite.table_info</strong>(name)</dt>
+    <dd>Returns an array of attributes for each element of the table.</dd>
+
+<dt>scraperwiki.<strong>sqlite.save_var</strong>(key, value)</dt>
+    <dd>Saves an arbitrary single-value into a table called
+    <var>swvariables</var>.  Intended to store scraper state so that
+    a scraper can continue after an interruption.
+    </dd>
+
+<dt>scraperwiki.<strong>sqlite.get_var</strong>(key[, default])</dt>
+    <dd>Retrieves a single value that was saved by <var>save_var</var>.
+        Only works for string, float, or int types.  
+        For anything else, use the <a
+        href="http://docs.python.org/library/pickle.html">pickle
+        library</a> to turn it into a string.
+    </dd>
+</dl>
+
+<dt>scraperwiki.<strong>sqlite.SqliteError</strong></dt>
+    <dd>An exception that is raised when there is, for example, a syntax error in your sql query.
+    </dd>
+</dl>
+
+
+<h3>Views</h3>
+
+<dt>scraperwiki.<strong>utils.httpresponseheader</strong>(headerkey, headervalue)</dt>
+    <dd><p>Set the content-type header to something other than HTML when
+    using a ScraperWiki "view".  For example:</p>
+    <code>scraperwiki.utils.httpresponseheader("Content-Type",
+    "image/png")</code>
+    </dd>
+
+<dt>scraperwiki.<strong>dumpMessage</strong>({"content":base64.encodestring(binstring), "message_type":"console", "encoding":"base64"})</dt>
+    <dd>The method for outputting the binary string <var>binstring</var>
+    that contains, for example, a PNG image</dd>
+
+<h3>Miscellaneous</h3>
+<dl>
+
+<dt>scraperwiki.<strong>pdftoxml</strong>(pdfdata, options='')</dt>
+    <dd>Convert a byte string containing a PDF file into an XML file containing the coordinates 
+        and font of each text string.<br/><var>options</var> is an optional string of options (!!) to be passed to the underlying pdftohtml command (see <a href="http://linux.die.net/man/1/pdftohtml">the pdftohtml documentation</a> for details).<br/>
+        Refer to 
+        <a href="https://scraperwiki.com/scrapers/new/python?template=advanced-scraping-pdfs">the example</a> 
+        for more details.
+    </dd>
+
+</dl>
+
+<h3>Exceptions</h3>
+
+<dl>
+
+<dt>scraperwiki.<strong>Error</strong></dt>
+    <dd>This is the base class for all exceptions raised by the
+    ScraperWiki library code.  Currently there is only one
+    subclass used (see below), but we like to leave room for
+    future expansion.</dd>
+
+<dt>scraperwiki.<strong>CPUTimeExceededError</strong></dt>
+    <dd><p>This is raised when a script running on ScraperWiki has used
+    too much CPU time.  This is implemented in a similar fashion
+    across all our supported languages and is explained in a bit
+    more detail <a href="/docs/python/faq/#cpu_limit">in
+    the FAQ</a>.</p>
+    
+    <p><a
+    href="https://scraperwiki.com/scrapers/cpu-py/edit/">This is
+    a simple example of how to catch the exception</a>.</p>
+    </dd>
+
