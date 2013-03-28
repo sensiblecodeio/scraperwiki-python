@@ -24,3 +24,6 @@ class CPUTimeExceededError(Error):
 from .utils import log, scrape, pdftoxml, swimport
 import utils, sqlite
 import geo
+
+sql = sqlite
+
