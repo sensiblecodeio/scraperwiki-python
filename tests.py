@@ -287,39 +287,6 @@ class TestDateTime(TestDb):
     self.assertEqual([{u'birthday':str(d)}], scraperwiki.sqlite.select("* from swdata"))
     self.assertEqual({u'keys': [u'birthday'], u'data': [[str(d)]]}, scraperwiki.sqlite.execute("select * from swdata"))
 
-class TestGeo(TestCase):
-
-  postcodes = ["M15 4JY","bB8 9ex","l35uf"]
-
-  def check_postcode_to_latlng(self, postcode):
-    (lat, lng) = scraperwiki.geo.gb_postcode_to_latlng(postcode)
-    resp = loads(scraperwiki.scrape('http://mapit.mysociety.org/postcode/%s.json' % urllib2.quote(postcode)))
-    # For the UK a precision of 3dp (0.001) gives a latitude error
-    # of ~110m and longitude ~60m
-    self.assertEqual(round(lat, 3), round(resp['wgs84_lat'], 3))
-    self.assertEqual(round(lng, 3), round(resp['wgs84_lon'], 3))
-
-  def check_easting_northing_to_latlng(self, postcode):
-    resp = loads(scraperwiki.scrape('http://mapit.mysociety.org/postcode/%s.json' % urllib2.quote(postcode)))
-    (lat, lng) = scraperwiki.geo.os_easting_northing_to_latlng(resp['easting'], resp['northing'])
-    # For the UK a precision of 5dp (0.00001) gives a latitude error
-    # of ~1m and longitude ~0.5m
-    self.assertEqual(round(lat, 5), round(resp['wgs84_lat'], 5))
-    self.assertEqual(round(lng, 5), round(resp['wgs84_lon'], 5))
-
-  def test_postcode_to_latlng(self):
-    map(self.check_postcode_to_latlng, self.postcodes)
-
-  def test_easting_northing_to_latlng(self):
-    map(self.check_easting_northing_to_latlng, self.postcodes)
-
-  def test_extract_gb_postcode(self):
-    self.assertEqual(
-      map(scraperwiki.geo.extract_gb_postcode,
-          ["21 Golf Road, SWANLAWS, Td8 5tw", 
-           "41 Ilchester Road, MUIRHOUSES, EH519YR"]),
-      ["Td8 5tw", "EH519YR"])
-
 class TestImports(TestCase):
   'Test that all module contents are imported.'
   def setUp(self):
@@ -332,10 +299,10 @@ class TestImports(TestCase):
     
   def test_import_scraperwiki_sqlite(self):
     self.sw.sqlite
-    
-  def test_import_scraperwiki_geo(self):
-    self.sw.geo
-    
+
+  def test_import_scraperwiki_sql(self):
+    self.sw.sql
+     
   def test_import_scraperwiki_utils(self):
     self.sw.utils
     

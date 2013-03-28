@@ -32,7 +32,7 @@ setup(name='scraperwiki',
         'Programming Language :: SQL',
         'Topic :: Database :: Front-Ends',
     ],
-    packages=['scraperwiki', 'scraperwiki.geo'],
+    packages=['scraperwiki'],
 
     version = '0.3.0',
     license='GPL',

@@ -30,11 +30,6 @@ In general, features that have not been implemented raise a `NotImplementedError
 `scraperwiki.sqlite` may implement some less explored features
 of its API slightly differently from ScraperWiki.
 
-### Geo
-The UK geocoding helpers (`scraperwiki.geo`) documented on scraperwiki.com have been implemented. They partially depend on scraperwiki.com being available.
-
-<!-- They have also been released as a separate library (ukgeo). Not true yet. -->
-
 ### Utils
 `scraperwiki.utils` is implemented, as well as the following functions.
 
@@ -52,6 +47,7 @@ These submodules are deprecated and thus will not be implemented.
 * `scraperwiki.newsql`
 * `scraperwiki.sqlite.attach`
 * `scraperwiki.utils.swimport`
+* `scraperwiki.geo`
 
 ### Specs
 Here are some ScraperWiki scrapers that demonstrate the non-local library's quirks.
