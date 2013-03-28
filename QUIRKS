@@ -1,8 +1,9 @@
 ## Quirks
 
-The local library aims to be a drop-in replacement for the old ScraperWiki Classic library.
-In reality, the local version sometimes works better,
-though not all of the features have been implemented.
+This library aims to be compatible with the old ScraperWiki Classic library,
+which was itself quite quirky.
+
+It's not an exact drop in replacement, this document describes the differences.
 
 ## Differences
 
