@@ -98,20 +98,6 @@ SQLite</a> for the query language.
     </dd>
 </dl>
 
-
-<h3>Views</h3>
-
-<dt>scraperwiki.<strong>utils.httpresponseheader</strong>(headerkey, headervalue)</dt>
-    <dd><p>Set the content-type header to something other than HTML when
-    using a ScraperWiki "view".  For example:</p>
-    <code>scraperwiki.utils.httpresponseheader("Content-Type",
-    "image/png")</code>
-    </dd>
-
-<dt>scraperwiki.<strong>dumpMessage</strong>({"content":base64.encodestring(binstring), "message_type":"console", "encoding":"base64"})</dt>
-    <dd>The method for outputting the binary string <var>binstring</var>
-    that contains, for example, a PNG image</dd>
-
 <h3>Miscellaneous</h3>
 <dl>
 

@@ -20,13 +20,6 @@ def log(message=""):
     '''
     print(message)
 
-def httpresponseheader(headerkey, headervalue):
-    '''
-    Fake setting the HTTP Response Header.  For example
-    scraperwiki.utils.httpresponseheader('Content-Type', 'text/plain')
-    '''
-    pass
-
 def GET():
     '''
     This is deprecated. Also, it's useless if you're

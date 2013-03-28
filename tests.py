@@ -308,7 +308,6 @@ class TestImports(TestCase):
     
   def test_import_scraperwiki_special_utils(self):
     self.sw.pdftoxml
-    self.sw.dumpMessage
     
 if __name__ == '__main__':
   main()
