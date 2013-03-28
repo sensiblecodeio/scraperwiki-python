@@ -111,25 +111,3 @@ SQLite</a> for the query language.
 
 </dl>
 
-<h3>Exceptions</h3>
-
-<dl>
-
-<dt>scraperwiki.<strong>Error</strong></dt>
-    <dd>This is the base class for all exceptions raised by the
-    ScraperWiki library code.  Currently there is only one
-    subclass used (see below), but we like to leave room for
-    future expansion.</dd>
-
-<dt>scraperwiki.<strong>CPUTimeExceededError</strong></dt>
-    <dd><p>This is raised when a script running on ScraperWiki has used
-    too much CPU time.  This is implemented in a similar fashion
-    across all our supported languages and is explained in a bit
-    more detail <a href="/docs/python/faq/#cpu_limit">in
-    the FAQ</a>.</p>
-    
-    <p><a
-    href="https://scraperwiki.com/scrapers/cpu-py/edit/">This is
-    a simple example of how to catch the exception</a>.</p>
-    </dd>
-

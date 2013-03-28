@@ -294,8 +294,6 @@ class TestImports(TestCase):
 
   def test_import_scraperwiki_root(self):
     self.sw.scrape
-    self.sw.Error
-    self.sw.CPUTimeExceededError
     
   def test_import_scraperwiki_sqlite(self):
     self.sw.sqlite
