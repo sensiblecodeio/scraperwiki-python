@@ -21,7 +21,7 @@ class CPUTimeExceededError(Error):
     """CPU time limit exceeded."""
     pass
 
-from .utils import log, scrape, pdftoxml, swimport
+from .utils import log, scrape, pdftoxml 
 import utils, sqlite
 import geo
 

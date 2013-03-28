@@ -1,23 +1,6 @@
-Local ScraperWiki Python Library
-====
-This library aims to be a drop-in replacement for the Python `scraperwiki` library
-for use locally. That is, functions will work the same way, and data will go
-into a local SQLite database; a targeted bombing of ScraperWiki's servers
-will not stop this local library from working, unless you happen to be running
-it on one of ScraperWiki's servers.
-
-## Installing
-
-This will soon be in PyPI, but for now you can just install from the git repository.
-
-## Documentation
-
-Read the standard ScraperWiki Python library's [documentation](https://scraperwiki.com/docs/python/python_help_documentation/),
-then look below for some quirks about the local version.
-
 ## Quirks
 
-The local library aims to be a drop-in replacement.
+The local library aims to be a drop-in replacement for the old ScraperWiki Classic library.
 In reality, the local version sometimes works better,
 though not all of the features have been implemented.
 
@@ -58,7 +41,6 @@ The UK geocoding helpers (`scraperwiki.geo`) documented on scraperwiki.com have 
 * `scraperwiki.log`
 * `scraperwiki.scrape`
 * `scraperwiki.pdftoxml`
-* `scraperwiki.swimport`
 
 ### Deprecated
 These submodules are deprecated and thus will not be implemented.
@@ -68,10 +50,8 @@ These submodules are deprecated and thus will not be implemented.
 * `scraperwiki.jsqlite`
 * `scraperwiki.metadata`
 * `scraperwiki.newsql`
-
-### Development
-
-Run tests with `./runtests`; this small wrapper cleans up after itself.
+* `scraperwiki.sqlite.attach`
+* `scraperwiki.utils.swimport`
 
 ### Specs
 Here are some ScraperWiki scrapers that demonstrate the non-local library's quirks.

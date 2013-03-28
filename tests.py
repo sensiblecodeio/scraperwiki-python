@@ -263,31 +263,6 @@ class TestQuestionMark(TestDb):
     observed = scraperwiki.sqlite.select('* from zhuozi')
     self.assertListEqual(observed, [{'a': 'apple', 'b': 'banana'}])
 
-class TestAttach(TestDb):
-  def hsph(self):
-    #https://scraperwiki.com/scrapers/export_sqlite/hsph_faculty_1/
-    scraperwiki.sqlite.attach('hsph_faculty_1')
-    observed = scraperwiki.sqlite.select('count(*) as "c" from maincol')[0]['c']
-    expected = 461
-    self.assertEqual(observed, expected)
-
-  def test_hsph1(self):
-    "Do it normally"
-    self.hsph()
-
-  def test_hsph2(self):
-    "Then corrupt the file and do it again"
-    os.system('cat tests.py >> hsphfaculty')
-    self.hsph()
-
-  def setUp(self):
-    super(TestAttach, self).setUp()
-    os.system('rm hsphfaculty')
-
-  def tearDown(self):
-    super(TestAttach, self).tearDown()
-    os.system('rm hsphfaculty')
-
 class TestDateTime(TestDb):
 
   def rawdate(self, table="swdata", column="datetime"):
@@ -311,11 +286,6 @@ class TestDateTime(TestDb):
     self.assertEqual(str(d), self.rawdate(column="birthday"))
     self.assertEqual([{u'birthday':str(d)}], scraperwiki.sqlite.select("* from swdata"))
     self.assertEqual({u'keys': [u'birthday'], u'data': [[str(d)]]}, scraperwiki.sqlite.execute("select * from swdata"))
-
-class TestSWImport(TestCase):
-  def test_csv2sw(self):
-    csv2sw = scraperwiki.swimport('csv2sw')
-    self.assertEquals(type(csv2sw.read.csv), type(lambda : None) )
 
 class TestGeo(TestCase):
 

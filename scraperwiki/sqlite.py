@@ -33,16 +33,6 @@ def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
         dt.create_index(unique_keys, table_name, unique = True, if_not_exists = True)
     return dt.upsert(data, table_name = table_name)
 
-def attach(name, asname=None, verbose=1):
-    "This somehow downloads the database from scraperwiki."
-    if asname == None:
-        asname = name
-    if not os.path.isfile("%s"%asname):
-        print "#### one time import of %s database"
-        os.system('wget -O %s https://scraperwiki.com/scrapers/export_sqlite/%s/' % (asname, name))
-    
-    dt.execute('attach {0} AS {0}'.format(asname), commit = False)
-
 def commit(verbose=1):
     dt.commit()
 

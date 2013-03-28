@@ -72,14 +72,6 @@ def pdftoxml(pdfdata):
     xmlin.close()
     return xmldata
 
-def swimport(name, swinstance="https://scraperwiki.com"):
-    'Import from a ScraperWiki script'
-    url = "%s/editor/raw/%s" % (swinstance, name)
-    if not os.path.isfile("%s.py"%name):
-      print "#### one time download of %s"%name
-      os.system('wget -O %s.py \'%s\'' % (name, url))
-    return __import__(name)
-
 def jsviewcall(name, **args):
     'callback to a view with parameter lists (cross language capability)'
     url = "https://scraperwiki.com/views/%s/run/?%s" % (name, urllib.urlencode(args))

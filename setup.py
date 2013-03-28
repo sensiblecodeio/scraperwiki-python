@@ -13,10 +13,6 @@ def has_external_dependency(name):
             return True
     return False
 
-if not has_external_dependency('wget'):
-    warnings.warn(
-        'wget not found: attach() and swimport() will not work.')
-
 if not has_external_dependency('pdftohtml'):
     warnings.warn(
         'Local Scraperlibs requires pdftohtml, but pdftoxml was not found\n'
