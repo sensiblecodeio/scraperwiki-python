@@ -30,7 +30,7 @@ It is based on the Python module dumptruck. You should expect it to support
 other SQL databases at a later date.</p>
 
 <dl>
-<dt>scraperwiki.<strong>sql.save</strong>(unique_keys, data[, table_name="swdata", verbose=2])</dt>
+<dt>scraperwiki.<strong>sql.save</strong>(unique_keys, data[, table_name="swdata"])</dt>
     <dd><p>Saves a data record into the datastore into the table given
     by <var>table_name</var>.</p>
     <p>data is a dict object with field names as keys;
@@ -38,11 +38,9 @@ other SQL databases at a later date.</p>
         of data.keys() which determines when a record is
         overwritten.</p>
     <p>For large numbers of records data can be a list of dicts.</p>
-    <p><var>verbose</var> alters what is shown in the <var>Data</var> tab
-    of the editor.</p>
     </dd>
 
-<dt>scraperwiki.<strong>sql.execute</strong>(sql[, vars], verbose=1)</dt>
+<dt>scraperwiki.<strong>sql.execute</strong>(sql[, vars])</dt>
     <dd><p>Executes any arbitrary SQL command. For
     example create, delete, insert or drop.</p>
     <p><var>vars</var> is an optional list of parameters, inserted when
@@ -58,7 +56,7 @@ other SQL databases at a later date.</p>
     </p>
     </dd>
 
-<dt>scraperwiki.<strong>sql.select</strong>(sqlfrag[, vars], verbose=1)</dt>
+<dt>scraperwiki.<strong>sql.select</strong>(sqlfrag[, vars])</dt>
     <dd><p>Executes a select command on the datastore.  For example:</p>
     <code>scraperwiki.sql.select("* from swdata limit 10")</code>
     <p>Returns a list of dicts that have been selected.</p>
