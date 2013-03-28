@@ -33,20 +33,20 @@ other SQL databases at a later date.</p>
 <dt>scraperwiki.<strong>sql.save</strong>(unique_keys, data[, table_name="swdata"])</dt>
     <dd><p>Saves a data record into the datastore into the table given
     by <var>table_name</var>.</p>
-    <p>data is a dict object with field names as keys;
+    <p><var>data</var> is a dict object with field names as keys;
     <var>unique_keys</var> is a subset
         of data.keys() which determines when a record is
         overwritten.</p>
-    <p>For large numbers of records data can be a list of dicts.</p>
+    <p>For large numbers of records <var>data</var> can be a list of dicts.</p>
     </dd>
 
 <dt>scraperwiki.<strong>sql.execute</strong>(sql[, vars])</dt>
     <dd><p>Executes any arbitrary SQL command. For
-    example create, delete, insert or drop.</p>
+    example CREATE, DELETE, INSERT or drop.</p>
     <p><var>vars</var> is an optional list of parameters, inserted when
-    the select command contains &lsquo;?&rsquo;s.
+    the SQL command contains &lsquo;?&rsquo;s.
     For example:</p>
-    <code>scraperwiki.sql.execute("insert into swdata values (?,?,?)", [a,b,c])</code>
+    <code>scraperwiki.sql.execute("INSERT INTO swdata VALUES (?,?,?)", [a,b,c])</code>
     <p>The &lsquo;?&rsquo; convention is like "paramstyle qmark"
     from <a href="http://www.python.org/dev/peps/pep-0249/">Python's
     DB API 2.0</a> (but note that the API to the datastore is
@@ -58,7 +58,7 @@ other SQL databases at a later date.</p>
 
 <dt>scraperwiki.<strong>sql.select</strong>(sqlfrag[, vars])</dt>
     <dd><p>Executes a select command on the datastore.  For example:</p>
-    <code>scraperwiki.sql.select("* from swdata limit 10")</code>
+    <code>scraperwiki.sql.select("* FROM swdata LIMIT 10")</code>
     <p>Returns a list of dicts that have been selected.</p>
     <p><var>vars</var> is an optional list of parameters, inserted when the
     select command contains &lsquo;?&rsquo;s.  This is like the
@@ -70,7 +70,7 @@ other SQL databases at a later date.</p>
     </dd>
 
 <dt>scraperwiki.<strong>sql.show_tables</strong>([dbname])</dt>
-    <dd>Returns an array of tables and their schemas in either the current or an attached database.</dd>
+    <dd>Returns an array of tables and their schemas in the current database.</dd>
 
 <dt>scraperwiki.<strong>sql.table_info</strong>(name)</dt>
     <dd>Returns an array of attributes for each element of the table.</dd>
