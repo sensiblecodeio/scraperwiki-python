@@ -49,6 +49,8 @@ These submodules are deprecated and thus will not be implemented.
 * `scraperwiki.utils.swimport`
 * `scraperwiki.geo`
 
+verbose parameter to various functions is deprecated
+
 ### Specs
 Here are some ScraperWiki scrapers that demonstrate the non-local library's quirks.
 
