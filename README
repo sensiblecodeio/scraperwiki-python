@@ -20,18 +20,17 @@ can also be used locally or on your own servers.
 </dl>
 
 
-<h3><span id="sql"></span>Datastore (SQLite)</h3>
+<h3><span id="sql"></span>Saving data</h3>
 
-<p>ScraperWiki provides a fully-fledged SQLite database for each scraper which
-you can save to.  You can read the data back that has been committed by other
-scrapers, or extract it <a href="/docs/api">through the API</a>. 
-</p>
-<p>See SQLite's <a href="http://www.sqlite.org/lang.html">SQL as understood by
-SQLite</a> for the query language.  
-</p>
+<p>Helper functions for saving and querying an SQL database. Updates
+the schema automatically according to the data you save.</p>
+
+<p>Currently only supports SQLite. It will make a local SQLite database.
+It is based on the Python module dumptruck. You should expect it to support
+other SQL databases at a later date.</p>
 
 <dl>
-<dt>scraperwiki.<strong>sqlite.save</strong>(unique_keys, data[, table_name="swdata", verbose=2])</dt>
+<dt>scraperwiki.<strong>sql.save</strong>(unique_keys, data[, table_name="swdata", verbose=2])</dt>
     <dd><p>Saves a data record into the datastore into the table given
     by <var>table_name</var>.</p>
     <p>data is a dict object with field names as keys;
@@ -43,13 +42,13 @@ SQLite</a> for the query language.
     of the editor.</p>
     </dd>
 
-<dt>scraperwiki.<strong>sqlite.execute</strong>(sql[, vars], verbose=1)</dt>
-    <dd><p>Executes any arbitrary sqlite command. For
+<dt>scraperwiki.<strong>sql.execute</strong>(sql[, vars], verbose=1)</dt>
+    <dd><p>Executes any arbitrary SQL command. For
     example create, delete, insert or drop.</p>
     <p><var>vars</var> is an optional list of parameters, inserted when
     the select command contains &lsquo;?&rsquo;s.
     For example:</p>
-    <code>scraperwiki.sqlite.execute("insert into swdata values (?,?,?)", [a,b,c])</code>
+    <code>scraperwiki.sql.execute("insert into swdata values (?,?,?)", [a,b,c])</code>
     <p>The &lsquo;?&rsquo; convention is like "paramstyle qmark"
     from <a href="http://www.python.org/dev/peps/pep-0249/">Python's
     DB API 2.0</a> (but note that the API to the datastore is
@@ -59,32 +58,32 @@ SQLite</a> for the query language.
     </p>
     </dd>
 
-<dt>scraperwiki.<strong>sqlite.select</strong>(sqlfrag[, vars], verbose=1)</dt>
+<dt>scraperwiki.<strong>sql.select</strong>(sqlfrag[, vars], verbose=1)</dt>
     <dd><p>Executes a select command on the datastore.  For example:</p>
-    <code>scraperwiki.sqlite.select("* from swdata limit 10")</code>
+    <code>scraperwiki.sql.select("* from swdata limit 10")</code>
     <p>Returns a list of dicts that have been selected.</p>
     <p><var>vars</var> is an optional list of parameters, inserted when the
     select command contains &lsquo;?&rsquo;s.  This is like the
     feature in the <var>.execute</var> command, above.</p>
     </dd>
 
-<dt>scraperwiki.<strong>sqlite.commit</strong>()</dt>
-    <dd>Commits to the file after a series of execute commands.  (sqlite.save auto-commits after every action).
+<dt>scraperwiki.<strong>sql.commit</strong>()</dt>
+    <dd>Commits to the file after a series of execute commands.  (sql.save auto-commits after every action).
     </dd>
 
-<dt>scraperwiki.<strong>sqlite.show_tables</strong>([dbname])</dt>
+<dt>scraperwiki.<strong>sql.show_tables</strong>([dbname])</dt>
     <dd>Returns an array of tables and their schemas in either the current or an attached database.</dd>
 
-<dt>scraperwiki.<strong>sqlite.table_info</strong>(name)</dt>
+<dt>scraperwiki.<strong>sql.table_info</strong>(name)</dt>
     <dd>Returns an array of attributes for each element of the table.</dd>
 
-<dt>scraperwiki.<strong>sqlite.save_var</strong>(key, value)</dt>
+<dt>scraperwiki.<strong>sql.save_var</strong>(key, value)</dt>
     <dd>Saves an arbitrary single-value into a table called
     <var>swvariables</var>.  Intended to store scraper state so that
     a scraper can continue after an interruption.
     </dd>
 
-<dt>scraperwiki.<strong>sqlite.get_var</strong>(key[, default])</dt>
+<dt>scraperwiki.<strong>sql.get_var</strong>(key[, default])</dt>
     <dd>Retrieves a single value that was saved by <var>save_var</var>.
         Only works for string, float, or int types.  
         For anything else, use the <a
