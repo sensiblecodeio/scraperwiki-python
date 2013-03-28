@@ -93,11 +93,6 @@ SQLite</a> for the query language.
     </dd>
 </dl>
 
-<dt>scraperwiki.<strong>sqlite.SqliteError</strong></dt>
-    <dd>An exception that is raised when there is, for example, a syntax error in your sql query.
-    </dd>
-</dl>
-
 <h3>Miscellaneous</h3>
 <dl>
 
