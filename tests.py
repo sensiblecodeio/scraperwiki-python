@@ -296,6 +296,8 @@ class TestStatus(TestCase):
   def test_raises_exception_with_invalid_type_field(self):
    self.assertRaises(AssertionError, scraperwiki.status, 'hello')
 
+  # XXX neeed some mocking tests for case of run inside a box
+
 class TestImports(TestCase):
   'Test that all module contents are imported.'
   def setUp(self):

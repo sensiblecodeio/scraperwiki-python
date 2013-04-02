@@ -58,10 +58,11 @@ def _in_box():
 def status(type, message=None):
   assert type in ['ok', 'error']
 
-  # if not running in a ScraperWiki platform box, silently ignore status write
+  # if not running in a ScraperWiki platform box, silently do nothing
   if not _in_box():
     return
 
+  # send status update to the box
   r = requests.post("https://x.scraperwiki.com/api/status", data={'type':type, 'message':message})
   r.raise_for_status()
 
