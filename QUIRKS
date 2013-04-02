@@ -49,6 +49,7 @@ These submodules are deprecated and thus will not be implemented.
 * `scraperwiki.sqlite.attach`
 * `scraperwiki.utils.swimport`
 * `scraperwiki.geo`
+* `scraperwiki.log`
 
 verbose parameter to various functions is deprecated
 

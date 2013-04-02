@@ -13,13 +13,6 @@ import warnings
 import tempfile
 import urllib, urllib2
  
-def log(message=""):
-    '''
-    This is useful for profiling the code in the browser,
-    but we just print the message in the local version
-    '''
-    print(message)
-
 def GET():
     '''
     This is deprecated. Also, it's useless if you're

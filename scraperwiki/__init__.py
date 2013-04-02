@@ -6,7 +6,7 @@ Local version of ScraperWiki Utils, documentation here:
 https://scraperwiki.com/docs/python/python_help_documentation/
 '''
 
-from .utils import log, scrape, pdftoxml 
+from .utils import scrape, pdftoxml
 import utils, sqlite
 
 sql = sqlite
