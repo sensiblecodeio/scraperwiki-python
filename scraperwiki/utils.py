@@ -13,13 +13,6 @@ import warnings
 import tempfile
 import urllib, urllib2
  
-def GET():
-    '''
-    This is deprecated. Also, it's useless if you're
-    running locally rather than as a CGI script.
-    '''
-    warnings.warn('Deprecated', DeprecationWarning)   
-
 def scrape (url, params = None, user_agent = None) :
     '''
     Scrape a URL optionally with parameters.
