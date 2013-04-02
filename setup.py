@@ -34,7 +34,7 @@ setup(name='scraperwiki',
     ],
     packages=['scraperwiki'],
 
-    version = '0.3.0',
+    version = '0.3.1',
     license='GPL',
     install_requires = ['dumptruck>=0.1.2', 'requests'],
    )
