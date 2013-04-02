@@ -58,15 +58,6 @@ def pdftoxml(pdfdata):
     xmlin.close()
     return xmldata
 
-def jsviewcall(name, **args):
-    'callback to a view with parameter lists (cross language capability)'
-    url = "https://scraperwiki.com/views/%s/run/?%s" % (name, urllib.urlencode(args))
-    response = urllib.urlopen(url).read()
-    try:
-        return json.loads(response)
-    except ValueError:
-        return response
-
 urllib2opener = None
 def urllibSetup(http_proxy):
     raise NotImplementedError('Dunno what this does')
