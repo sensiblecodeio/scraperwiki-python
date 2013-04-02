@@ -95,7 +95,8 @@ other SQL databases at a later date.</p>
 
 <dt>scraperwiki.<strong>status</strong>(type, message=None)</dt>
     <dd>If run on the ScraperWiki platform (the new one, not Classic), updates
-        the visible status of the dataset.  <var>params</var> can be 'ok' or
+        the visible status of the dataset.  If not on the platform, does nothing.
+        <var>params</var> can be 'ok' or
         'error'. If no message is given, it will show the time since the update.
         See <a href="http://x.scraperwiki.com/docs#datasets-endpoints-status">dataset 
         status API</a> in the documentation for details.
