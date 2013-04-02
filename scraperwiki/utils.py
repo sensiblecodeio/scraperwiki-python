@@ -58,10 +58,3 @@ def pdftoxml(pdfdata):
     xmlin.close()
     return xmldata
 
-urllib2opener = None
-def urllibSetup(http_proxy):
-    raise NotImplementedError('Dunno what this does')
-
-class SWImporter(object):
-    def __init__(self, swinstance="https://scraperwiki.com"):
-        raise NotImplementedError('Standard Python imports are used instead')
