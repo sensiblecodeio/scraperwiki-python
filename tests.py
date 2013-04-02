@@ -287,6 +287,15 @@ class TestDateTime(TestDb):
     self.assertEqual([{u'birthday':str(d)}], scraperwiki.sqlite.select("* from swdata"))
     self.assertEqual({u'keys': [u'birthday'], u'data': [[str(d)]]}, scraperwiki.sqlite.execute("select * from swdata"))
 
+class TestStatus(TestCase):
+  'Test that the status endpoint works.'
+
+  def test_does_nothing_if_called_outside_box(self):
+    scraperwiki.status('ok')
+
+  def test_raises_exception_with_invalid_type_field(self):
+   self.assertRaises(AssertionError, scraperwiki.status, 'hello')
+
 class TestImports(TestCase):
   'Test that all module contents are imported.'
   def setUp(self):
@@ -300,6 +309,9 @@ class TestImports(TestCase):
 
   def test_import_scraperwiki_sql(self):
     self.sw.sql
+
+  def test_import_scraperwiki_status(self):
+    self.sw.status
      
   def test_import_scraperwiki_utils(self):
     self.sw.utils

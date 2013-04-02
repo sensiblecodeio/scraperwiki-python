@@ -12,6 +12,7 @@ import os
 import warnings
 import tempfile
 import urllib, urllib2
+import requests
  
 def scrape (url, params = None, user_agent = None) :
     '''
@@ -50,4 +51,20 @@ def pdftoxml(pdfdata):
     xmldata = xmlin.read()
     xmlin.close()
     return xmldata
+
+def _in_box():
+  return os.path.isfile(os.path.expanduser("~/box.json"))
+
+def status(type, message=None):
+  assert type in ['ok', 'error']
+
+  # if not running in a ScraperWiki platform box, silently ignore status write
+  if not _in_box():
+    return
+
+  r = requests.post("https://x.scraperwiki.com/api/status", data={'type':type, 'message':message})
+  r.raise_for_status()
+
+
+
 
