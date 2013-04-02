@@ -15,7 +15,7 @@ def has_external_dependency(name):
 
 if not has_external_dependency('pdftohtml'):
     warnings.warn(
-        'Local Scraperlibs requires pdftohtml, but pdftoxml was not found\n'
+        'Local Scraperlibs requires pdftohtml, but pdftohtml was not found\n'
         'in the PATH. You probably need to install it.'
     )
 
