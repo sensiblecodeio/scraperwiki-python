@@ -14,7 +14,7 @@ import tempfile
 import urllib, urllib2
 import requests
  
-def scrape (url, params = None, user_agent = None) :
+def scrape(url, params = None, user_agent = None) :
     '''
     Scrape a URL optionally with parameters.
     This is effectively a wrapper around urllib2.orlopen.
