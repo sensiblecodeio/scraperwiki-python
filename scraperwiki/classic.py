@@ -58,6 +58,9 @@ def export():
         _bail("Failed to get information about the scraper - is the name correct?")
     info = json.loads(r.content)
     with open(codefile, 'wb') as f:
+        hashbang = "#!/usr/bin/env {lang}\n".format(lang=info[0]['language'])
+        f.write(hashbang)
         f.write(info[0]['code'])
+
     
     urllib.urlretrieve(db_address, dbfile)
