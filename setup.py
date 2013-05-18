@@ -4,7 +4,8 @@
 
 import warnings
 import os
-from distutils.core import setup
+#from distutils.core import setup
+from setuptools import setup
 
 def has_external_dependency(name):
     'Check that a non-Python dependency is installed.'
@@ -37,4 +38,9 @@ setup(name='scraperwiki',
     version = '0.3.1',
     license='GPL',
     install_requires = ['dumptruck>=0.1.2', 'requests'],
+    entry_points = {
+        'console_scripts': [
+            'sw_classic_export = scraperwiki.classic:export',
+        ]
+    }    
    )
