@@ -19,7 +19,7 @@ if not has_external_dependency('pdftohtml'):
         'in the PATH. You probably need to install it.'
     )
 
-setup(name='scraperwiki',
+config = dict(name='scraperwiki',
     author='Francis Irving',
     author_email='francis@scraperwiki.com',
     description='Local version of ScraperWiki libraries',
@@ -36,5 +36,12 @@ setup(name='scraperwiki',
 
     version = '0.3.1',
     license='GPL',
-    install_requires = ['dumptruck>=0.1.2', 'requests'],
    )
+
+try:
+    from setuptools import setup
+    config['install_requires'] = ['dumptruck>=0.1.2', 'requests'],
+except ImportError:
+    pass
+
+setup(**config)
