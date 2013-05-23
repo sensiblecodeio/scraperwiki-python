@@ -63,7 +63,7 @@ def status(type, message=None):
     return
 
   # send status update to the box
-  r = requests.post("https://x.scraperwiki.com/api/status", data={'type':type, 'message':message})
+  r = requests.post("https://beta.scraperwiki.com/api/status", data={'type':type, 'message':message})
   r.raise_for_status()
 
 
