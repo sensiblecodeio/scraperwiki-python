@@ -1,0 +1,6 @@
+Just "pip install scraperwiki".
+
+You'll need pdftohtml, from the more recent Poppler packaging of it. On a Mac
+install it with `brew install poppler`. On Ubuntu/Debian do `brew install
+poppler-utils`.
+
