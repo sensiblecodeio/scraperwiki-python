@@ -13,7 +13,7 @@ import warnings
 import tempfile
 import urllib, urllib2
 import requests
- 
+
 def scrape(url, params = None, user_agent = None) :
     '''
     Scrape a URL optionally with parameters.
@@ -21,19 +21,19 @@ def scrape(url, params = None, user_agent = None) :
     '''
 
     headers = {}
-    
+
     if user_agent:
         headers['User-Agent'] = user_agent
-        
+
     data = params and urllib.urlencode(params) or None
     req = urllib2.Request(url, data=data, headers=headers)
     f = urllib2.urlopen(req)
-    
+
     text = f.read()
     f.close()
-    
+
     return text
-            
+
 def pdftoxml(pdfdata):
     """converts pdf file to xml file"""
     pdffout = tempfile.NamedTemporaryFile(suffix='.pdf')
@@ -63,7 +63,7 @@ def status(type, message=None):
     return
 
   # send status update to the box
-  r = requests.post("https://beta.scraperwiki.com/api/status", data={'type':type, 'message':message})
+  r = requests.post("https://scraperwiki.com/api/status", data={'type':type, 'message':message})
   r.raise_for_status()
 
 
