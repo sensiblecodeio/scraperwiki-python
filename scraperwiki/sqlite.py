@@ -70,7 +70,6 @@ def get_var(name, default=None, verbose=2):
     dt.execute(u"CREATE TEMPORARY TABLE IF NOT EXISTS %s (`value` blob, `type` text, `key` text PRIMARY KEY)" % dt._DumpTruck__vars_table, commit = False)
 
     sql = u'INSERT INTO `%s` (value, type, key) SELECT `value_blob`, `type`, `name` FROM `swvariables`' % dt._DumpTruck__vars_table
-    print(sql)
     dt.execute(sql, commit = False)
     try:
         value = dt.get_var(name)
