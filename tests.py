@@ -35,7 +35,7 @@ class TestSaveGetVar(TestDb):
 
   def test_string(self):
     self.savegetvar("asdio")
-  
+
   def test_int(self):
     self.savegetvar(1)
 
@@ -52,6 +52,14 @@ class TestSaveGetVar(TestDb):
     self.assertEqual(scraperwiki.sqlite.get_var("weird"), unicode(date1))
     scraperwiki.sqlite.save_var("weird", date2)
     self.assertEqual(scraperwiki.sqlite.get_var("weird"), unicode(date2))
+
+  def test_save_multiple_values(self):
+    scraperwiki.sqlite.save_var('foo', 'hello')
+    scraperwiki.sqlite.save_var('bar', 'goodbye')
+
+    self.assertEqual('hello', scraperwiki.sqlite.get_var('foo'))
+    self.assertEqual('goodbye', scraperwiki.sqlite.get_var('bar'))
+
 
 class TestGetNonexistantVar(TestDb):
   def test_get(self):
@@ -78,7 +86,7 @@ class TestSaveVar(TestDb):
 #
 #  def test_select(self):
 #    data_observed = scraperwiki.sqlite.select("* FROM `branches` WHERE Fax is not null ORDER BY Fax LIMIT 2;")
-#    data_expected = [{'town': u'\r\nCenturion', 'date_scraped': 1327791915.618461, 'Fax': u' (012) 312 3647', 'Tel': u' (012) 686 0500', 'address_raw': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001\n (012) 686 0500\n (012) 312 3647', 'blockId': 14, 'street-address': None, 'postcode': u'\r\n0001', 'address': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001', 'branchName': u'Head Office'}, {'town': u'\r\nCenturion', 'date_scraped': 1327792245.787187, 'Fax': u' (012) 312 3647', 'Tel': u' (012) 686 0500', 'address_raw': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001\n (012) 686 0500\n (012) 312 3647', 'blockId': 14, 'street-address': u'\r\n420 Witch Hazel Ave\n\r\nEcopark', 'postcode': u'\r\n0001', 'address': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001', 'branchName': u'Head Office'}] 
+#    data_expected = [{'town': u'\r\nCenturion', 'date_scraped': 1327791915.618461, 'Fax': u' (012) 312 3647', 'Tel': u' (012) 686 0500', 'address_raw': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001\n (012) 686 0500\n (012) 312 3647', 'blockId': 14, 'street-address': None, 'postcode': u'\r\n0001', 'address': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001', 'branchName': u'Head Office'}, {'town': u'\r\nCenturion', 'date_scraped': 1327792245.787187, 'Fax': u' (012) 312 3647', 'Tel': u' (012) 686 0500', 'address_raw': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001\n (012) 686 0500\n (012) 312 3647', 'blockId': 14, 'street-address': u'\r\n420 Witch Hazel Ave\n\r\nEcopark', 'postcode': u'\r\n0001', 'address': u'\r\n420 Witch Hazel Ave\n\r\nEcopark\n\r\nCenturion\n\r\n0001', 'branchName': u'Head Office'}]
 #    self.assertListEqual(data_observed, data_expected)
 
 #  def test_execute(self):
@@ -87,7 +95,7 @@ class TestSaveVar(TestDb):
 
 #  def test_select_data(self):
 #    data_observed = scraperwiki.sqlite.select("date_scraped FROM `branches` WHERE Fax=? AND date_scraped=?", [u" (012) 312 3647", 1327792245.787187])
-#   self.assertEqual(data_observed, [{u'date_scraped': 1327792245.787187}]) 
+#   self.assertEqual(data_observed, [{u'date_scraped': 1327792245.787187}])
 
 #  def test_execute_data(self):
 #    scraperwiki.sqlite.execute("INSERT INTO `branches` VALUES (?,?,?,?,?,?,?,?,?,?)", ["sometown",2,3,4,5,6,7,8,9,0])
@@ -131,14 +139,14 @@ class SaveAndCheck(TestDb):
     if twice:
       # Observe with DumpTruck
       observed2 = scraperwiki.sqlite.select('* FROM %s' % tableOut)
- 
+
       #Check
       expected1 = dataOut
       expected2 = [dataIn] if type(dataIn) == dict else dataIn
- 
+
       self.assertListEqual(observed1, expected1)
       self.assertListEqual(observed2, expected2)
-      
+
 class SaveAndSelect(TestDb):
   def save_and_select(self, d):
     scraperwiki.sqlite.save([], {"foo": d})
@@ -229,7 +237,7 @@ class TestSave(SaveAndCheck):
     , [(293,), (293,)]
     , twice = False
     )
-  
+
   def test_save_true(self):
     self.save_and_check(
       {"a": True}
@@ -272,7 +280,7 @@ class TestDateTime(TestDb):
     rawdate = cursor.fetchall()[0][0]
     connection.close()
     return rawdate
-   
+
   def test_save_date(self):
     d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d').date()
     scraperwiki.sqlite.save([], {"birthday":d})
@@ -305,7 +313,7 @@ class TestImports(TestCase):
 
   def test_import_scraperwiki_root(self):
     self.sw.scrape
-    
+
   def test_import_scraperwiki_sqlite(self):
     self.sw.sqlite
 
@@ -314,12 +322,12 @@ class TestImports(TestCase):
 
   def test_import_scraperwiki_status(self):
     self.sw.status
-     
+
   def test_import_scraperwiki_utils(self):
     self.sw.utils
-    
+
   def test_import_scraperwiki_special_utils(self):
     self.sw.pdftoxml
-    
+
 if __name__ == '__main__':
   main()
