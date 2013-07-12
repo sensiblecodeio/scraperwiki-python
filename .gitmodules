@@ -1,3 +1,0 @@
-[submodule "fixtures"]
-	path = fixtures
-	url = git@github.com:tlevine/highwall-fixtures.git
