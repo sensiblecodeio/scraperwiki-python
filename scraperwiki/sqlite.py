@@ -68,12 +68,15 @@ def get_var(name, default=None, verbose=2):
         return default
     dt.execute(u"CREATE TABLE IF NOT EXISTS swvariables (`value_blob` blob, `type` text, `name` text PRIMARY KEY)", commit = False)
     dt.execute(u"CREATE TEMPORARY TABLE IF NOT EXISTS %s (`value` blob, `type` text, `key` text PRIMARY KEY)" % dt._DumpTruck__vars_table, commit = False)
-    dt.execute(u'INSERT INTO %s SELECT `value_blob`, `type`, `name` FROM `swvariables`' % dt._DumpTruck__vars_table, commit = False)
+
+    sql = u'INSERT INTO `%s` (value, type, key) SELECT `value_blob`, `type`, `name` FROM `swvariables`' % dt._DumpTruck__vars_table
+    print(sql)
+    dt.execute(sql, commit = False)
     try:
-        return dt.get_var(name)
+        value = dt.get_var(name)
     except NameError:
         dt.connection.rollback()
         return default
-    else:
-        dt.execute(u'DROP TABLE `%s`' % dt._DumpTruck__vars_table, commit = False)
-        dt.commit()
+    dt.execute(u'DROP TABLE `%s`' % dt._DumpTruck__vars_table, commit = False)
+    dt.commit()
+    return value
