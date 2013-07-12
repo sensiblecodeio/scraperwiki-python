@@ -8,3 +8,4 @@ script:  nosetests
 matrix:
   allow_failures:
     - env: REQFILE=requirements.txt
+
