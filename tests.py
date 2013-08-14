@@ -31,9 +31,16 @@ class TestDb(TestCase):
 
 class TestException(TestDb):
     def testExceptionSaved(self):
-        os.system("""python -c 'import scraperwiki.exception;raise Exception'""")
-        l = scraperwiki.sqlite.select("* from _sw_error")
+        os.system("""python -c 'import scraperwiki.exception;raise ValueError'""")
+        l = scraperwiki.sqlite.select("exception_type,time from _sw_error")
+        # Check that some record is stored.
         assert l
+        # Check that the exception name appears.
+        assert 'ValueError' in l[0]['exception_type']
+        # Check that the time recorded is relatively recent.
+        time_str = l[0]['time']
+        then = datetime.datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S.%f')
+        assert (datetime.datetime.now() - then).total_seconds() < 5*60
 
 class TestSaveGetVar(TestDb):
 
