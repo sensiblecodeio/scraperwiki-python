@@ -11,7 +11,6 @@ import urllib2
 import scraperwiki
 
 
-
 class TestDb(TestCase):
     DBNAME = 'scraperwiki.sqlite'
 
