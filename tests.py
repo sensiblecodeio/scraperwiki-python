@@ -7,9 +7,8 @@ import shutil
 import datetime
 import urllib2
 
-import scraperwiki
-
 # This library
+import scraperwiki
 
 class TestDb(TestCase):
   DBNAME = 'scraperwiki.sqlite'
