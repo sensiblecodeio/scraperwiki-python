@@ -31,7 +31,7 @@ class TestDb(TestCase):
                 pass
 
 class TestException(TestDb):
-    def testSaved(self):
+    def testExceptionSaved(self):
         os.system("""python -c 'import scraperwiki.exception;raise Exception'""")
         l = scraperwiki.sqlite.select("* from _sw_error")
         assert l
