@@ -15,12 +15,15 @@ def sw_excepthook(type, value, tb):
         (_frame, filename, _lineno, _where, _code, _) = first_frame_tuple
         
         type_name = type.__module__ + '.' + type.__name__
+
+        message = repr(value)
         
         d = dict(time=datetime.datetime.now(), path=filename,
           traceback=''.join(traceback.format_tb(tb)),
-          pwd=os.getcwd(), exception_type=type_name, exception_value=repr(value))
+          pwd=os.getcwd(), exception_type=type_name, exception_value=message)
 
         scraperwiki.sql.save([], d, table_name="_sw_error")
+        scraperwiki.status('error', message)
     finally:
         _inner_excepthook(type, value, tb)
 
