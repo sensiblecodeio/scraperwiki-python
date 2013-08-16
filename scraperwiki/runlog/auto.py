@@ -51,5 +51,5 @@ def successful_exit():
         # during an atexit hook
         os.system(("python -c 'from sys import argv; "
             "import scraperwiki.runlog as R; "
-            "R.write(argv[1])' -- '{0}'")
+            "R.write(argv[-1])' -- '{0}'")
             .format(filename))
