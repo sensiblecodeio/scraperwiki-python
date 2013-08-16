@@ -34,7 +34,7 @@ class TestDb(TestCase):
 class TestException(TestDb):
     def testExceptionSaved(self):
         script = dedent("""
-            import scraperwiki.exception
+            import scraperwiki.runlog
             raise ValueError
         """)
         process = Popen(["python", "-c", script], stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
