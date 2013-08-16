@@ -42,6 +42,9 @@ sys.excepthook = sw_excepthook
 @atexit.register
 def successful_exit():
     if _successful_exit:
+
+        filename = sys.argv[0]
+
         d = dict(time=datetime.datetime.now(), path=filename, pwd=os.getcwd(),
             success=True)
         scraperwiki.sql.save([], d, table_name="_sw_runlog")

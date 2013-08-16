@@ -41,7 +41,7 @@ class TestException(TestDb):
         stdout, stderr = process.communicate()
         assert 'Traceback' in stderr, "stderr should contain the original Python traceback"
 
-        l = scraperwiki.sqlite.select("exception_type,time from _sw_error")
+        l = scraperwiki.sqlite.select("exception_type, time from _sw_runlog order by time desc limit 1")
         # Check that some record is stored.
         assert l
         # Check that the exception name appears.
@@ -49,6 +49,23 @@ class TestException(TestDb):
         # Check that the time recorded is relatively recent.
         time_str = l[0]['time']
         then = datetime.datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S.%f')
+        assert (datetime.datetime.now() - then).total_seconds() < 5*60
+
+    def testRunlogSuccess(self):
+        script = dedent("""
+            import scraperwiki.runlog
+        """)
+        process = Popen(["python", "-c", script], stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
+        stdout, stderr = process.communicate()
+
+        l = scraperwiki.sqlite.select("time, success from _sw_runlog order by time desc limit 1")
+
+        # Check that some record is stored.
+        assert l
+
+        r = l[0]
+        assert r['success']
+        then = datetime.datetime.strptime(r['time'], '%Y-%m-%d %H:%M:%S.%f')
         assert (datetime.datetime.now() - then).total_seconds() < 5*60
 
 class TestSaveGetVar(TestDb):
