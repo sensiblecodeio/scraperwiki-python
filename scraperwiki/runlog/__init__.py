@@ -23,7 +23,7 @@ def sw_excepthook(type, value, tb):
           pwd=os.getcwd(), exception_type=type_name, exception_value=message)
 
         scraperwiki.sql.save([], d, table_name="_sw_error")
-        scraperwiki.status('error', message)
+        scraperwiki.status('error')
     finally:
         _inner_excepthook(type, value, tb)
 
