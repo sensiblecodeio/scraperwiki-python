@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from unittest import TestCase, main
 from json import loads, dumps
+from subprocess import Popen, PIPE
+from textwrap import dedent
 import sqlite3
 import os
 import shutil
@@ -31,7 +33,14 @@ class TestDb(TestCase):
 
 class TestException(TestDb):
     def testExceptionSaved(self):
-        os.system("""python -c 'import scraperwiki.exception;raise ValueError'""")
+        script = dedent("""
+            import scraperwiki.exception
+            raise ValueError
+        """)
+        process = Popen(["python", "-c", script], stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
+        stdout, stderr = process.communicate()
+        assert 'Traceback' in stderr, "stderr should contain the original Python traceback"
+
         l = scraperwiki.sqlite.select("exception_type,time from _sw_error")
         # Check that some record is stored.
         assert l
