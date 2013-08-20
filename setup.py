@@ -32,7 +32,7 @@ config = dict(name='scraperwiki',
         'Programming Language :: SQL',
         'Topic :: Database :: Front-Ends',
     ],
-    packages=['scraperwiki'],
+    packages=['scraperwiki', 'scraperwiki.runlog'],
 
     version = '0.3.5',
     license='GPL',
