@@ -34,7 +34,7 @@ class TestDb(TestCase):
 class TestException(TestDb):
     def testExceptionSaved(self):
         script = dedent("""
-            import scraperwiki.runlog.auto
+            import scraperwiki.runlog; scraperwiki.runlog.setup()
             raise ValueError
         """)
         process = Popen(["python", "-c", script], stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
@@ -53,7 +53,7 @@ class TestException(TestDb):
 
     def testRunlogSuccess(self):
         script = dedent("""
-            import scraperwiki.runlog.auto
+            import scraperwiki.runlog; scraperwiki.runlog.setup()
         """)
         process = Popen(["python", "-c", script], stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
         stdout, stderr = process.communicate()
