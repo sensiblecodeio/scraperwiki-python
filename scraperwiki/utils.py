@@ -9,6 +9,7 @@ https://scraperwiki.com/docs/python/python_help_documentation/
 '''
 
 import os
+import sys
 import warnings
 import tempfile
 import urllib, urllib2
@@ -56,16 +57,21 @@ def _in_box():
   return os.path.isfile(os.path.expanduser("~/box.json"))
 
 def status(type, message=None):
-  assert type in ['ok', 'error']
+    assert type in ['ok', 'error']
 
-  # if not running in a ScraperWiki platform box, silently do nothing
-  if not _in_box():
-    return "Not in box"
+    # if not running in a ScraperWiki platform box, silently do nothing
+    if not _in_box():
+        return "Not in box"
 
-  # send status update to the box
-  r = requests.post("https://scraperwiki.com/api/status", data={'type':type, 'message':message})
-  r.raise_for_status()
-  return r.content
+    url = os.environ.get("SW_STATUS_URL", "https://scraperwiki.com/api/status")
+    if url == "OFF":
+        # For development mode
+        return
+
+    # send status update to the box
+    r = requests.post(url, data={'type':type, 'message':message})
+    r.raise_for_status()
+    return r.content
 
 
 
