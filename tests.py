@@ -41,34 +41,43 @@ class TestException(TestDb):
         """)
         process = Popen(["python", "-c", script], stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
         stdout, stderr = process.communicate()
-        assert 'Traceback' in stderr, "stderr should contain the original Python traceback"
-        assert re.match(r'^\w{8}-\w{4}-\w{4}-\w{4}-\w{10}', stdout), "runlog.setup() should return a run_id"
 
-        l = scraperwiki.sqlite.select("exception_type, time from _sw_runlog order by time desc limit 1")
+        assert 'Traceback' in stderr, "stderr should contain the original Python traceback"
+        match = re.match(r'^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', stdout)
+        assert match, "runlog.setup() should return a run_id"
+
+        l = scraperwiki.sqlite.select("exception_type, run_id, time from _sw_runlog order by time desc limit 1")
+
         # Check that some record is stored.
         assert l
         # Check that the exception name appears.
-        assert 'ValueError' in l[0]['exception_type']
+        assert 'ValueError' in l[0]['exception_type'], "runlog should save exception types to the database"
+        # Check that the run_id from earlier has been saved.
+        assert match.group() == l[0].get('run_id'), "runlog should save a run_id to the database"
         # Check that the time recorded is relatively recent.
         time_str = l[0]['time']
         then = datetime.datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S.%f')
-        assert (datetime.datetime.now() - then).total_seconds() < 5*60
+        assert (datetime.datetime.now() - then).total_seconds() < 5*60, "run log should save a time to the database"
 
     def testRunlogSuccess(self):
         script = dedent("""
-            import scraperwiki.runlog; scraperwiki.runlog.setup()
+            import scraperwiki.runlog
+            print scraperwiki.runlog.setup()
         """)
         process = Popen(["python", "-c", script], stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
         stdout, stderr = process.communicate()
 
-        l = scraperwiki.sqlite.select("time, success from _sw_runlog order by time desc limit 1")
+        l = scraperwiki.sqlite.select("time, run_id, success from _sw_runlog order by time desc limit 1")
 
         # Check that some record is stored.
         assert l
-
-        r = l[0]
-        assert r['success']
-        then = datetime.datetime.strptime(r['time'], '%Y-%m-%d %H:%M:%S.%f')
+        # Check that it has saved a success column.
+        assert l[0]['success']
+        # Check that a run_id has been saved.
+        match = re.match(r'^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', stdout)
+        assert match.group() == l[0].get('run_id'), "runlog should save a run_id to the database"
+        # Check that the time is relatively recent.
+        then = datetime.datetime.strptime(l[0]['time'], '%Y-%m-%d %H:%M:%S.%f')
         assert (datetime.datetime.now() - then).total_seconds() < 5*60
 
 class TestSaveGetVar(TestDb):
