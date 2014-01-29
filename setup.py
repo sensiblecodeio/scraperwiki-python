@@ -34,7 +34,7 @@ config = dict(name='scraperwiki',
     ],
     packages=['scraperwiki', 'scraperwiki.runlog'],
 
-    version = '0.3.7',
+    version = '0.3.8',
     license='GPL',
    )
 
