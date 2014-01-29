@@ -10,6 +10,7 @@ import inspect
 import os
 import sys
 import traceback
+import uuid
 
 import scraperwiki
 
@@ -27,7 +28,7 @@ def make_excepthook(inner_excepthook):
         try:
             first_frame_tuple = inspect.getouterframes(tb.tb_frame)[-1]
             (_frame, filename, _lineno, _where, _code, _) = first_frame_tuple
-            
+
             type_name = type.__module__ + '.' + type.__name__
 
             message = repr(value)
@@ -75,3 +76,5 @@ def setup():
     _hook_installed = True
     sys.excepthook = make_excepthook(sys.excepthook)
     atexit.register(successful_exit)
+
+    return uuid.uuid4()

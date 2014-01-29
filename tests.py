@@ -8,6 +8,7 @@ import os
 import shutil
 import datetime
 import urllib2
+import re
 
 # This library
 import scraperwiki
@@ -34,12 +35,14 @@ class TestDb(TestCase):
 class TestException(TestDb):
     def testExceptionSaved(self):
         script = dedent("""
-            import scraperwiki.runlog; scraperwiki.runlog.setup()
+            import scraperwiki.runlog
+            print scraperwiki.runlog.setup()
             raise ValueError
         """)
         process = Popen(["python", "-c", script], stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
         stdout, stderr = process.communicate()
         assert 'Traceback' in stderr, "stderr should contain the original Python traceback"
+        assert re.match(r'^\w{8}-\w{4}-\w{4}-\w{4}-\w{10}', stdout), "runlog.setup() should return a run_id"
 
         l = scraperwiki.sqlite.select("exception_type, time from _sw_runlog order by time desc limit 1")
         # Check that some record is stored.
