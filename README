@@ -114,3 +114,8 @@ other SQL databases at a later date.</p>
 
 </dl>
 
+<h3>Environment Variables</h3>
+<dt>SCRAPERWIKI_DATABASE_NAME</dt>
+  <dd>default: `scraperwiki.sqlite` - name of database</dd>
+<dt>SCRAPERWIKI_DATABASE_TIMEOUT</dt>
+  <dd>default: `300` - number of seconds database will wait for a lock</dd>
