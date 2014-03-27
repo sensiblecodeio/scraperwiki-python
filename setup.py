@@ -34,13 +34,13 @@ config = dict(name='scraperwiki',
     ],
     packages=['scraperwiki', 'scraperwiki.runlog'],
 
-    version = '0.3.8',
+    version = '0.3.9',
     license='GPL',
    )
 
 try:
     from setuptools import setup
-    config['install_requires'] = ['dumptruck>=0.1.2', 'requests'],
+    config['install_requires'] = ['dumptruck>=0.1.6', 'requests'],
 except ImportError:
     pass
 
