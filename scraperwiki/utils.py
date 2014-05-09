@@ -54,7 +54,7 @@ def pdftoxml(pdfdata):
     return xmldata
 
 def _in_box():
-  return os.path.isfile(os.path.expanduser("~/box.json"))
+  return os.environ.get('HOME', None) == '/home'
 
 def status(type, message=None):
     assert type in ['ok', 'error']
