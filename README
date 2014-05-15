@@ -1,4 +1,4 @@
-<h2>ScraperWiki Python library</h3>
+<h2>ScraperWiki Python library</h2>
 
 [![Build Status](https://travis-ci.org/scraperwiki/scraperwiki-python.png)](https://travis-ci.org/scraperwiki/scraperwiki-python)
 
@@ -106,10 +106,7 @@ other SQL databases at a later date.</p>
 
 <dt>scraperwiki.<strong>pdftoxml</strong>(pdfdata, options='')</dt>
     <dd>Convert a byte string containing a PDF file into an XML file containing the coordinates 
-        and font of each text string.<br/><var>options</var> is an optional string of options (!!) to be passed to the underlying pdftohtml command (see <a href="http://linux.die.net/man/1/pdftohtml">the pdftohtml documentation</a> for details).<br/>
-        Refer to 
-        <a href="https://scraperwiki.com/scrapers/new/python?template=advanced-scraping-pdfs">the example</a> 
-        for more details.
+        and font of each text string (see <a href="http://linux.die.net/man/1/pdftohtml">the pdftohtml documentation</a> for details).<br/>
     </dd>
 
 </dl>
