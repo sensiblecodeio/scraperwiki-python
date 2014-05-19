@@ -1,6 +1,6 @@
 <h2>ScraperWiki Python library</h2>
 
-[![Build Status](https://travis-ci.org/scraperwiki/scraperwiki-python.png)](https://travis-ci.org/scraperwiki/scraperwiki-python)
+[![Build Status](https://travis-ci.org/scraperwiki/scraperwiki-python.png?branch=master)](https://travis-ci.org/scraperwiki/scraperwiki-python)
 
 <p>This is a Python library for scraping web pages and saving data. 
 It is the easiest way to save data on the ScraperWiki platform, and it
@@ -111,3 +111,8 @@ other SQL databases at a later date.</p>
 
 </dl>
 
+<h3>Environment Variables</h3>
+<dt>SCRAPERWIKI_DATABASE_NAME</dt>
+  <dd>default: `scraperwiki.sqlite` - name of database</dd>
+<dt>SCRAPERWIKI_DATABASE_TIMEOUT</dt>
+  <dd>default: `300` - number of seconds database will wait for a lock</dd>

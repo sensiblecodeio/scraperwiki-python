@@ -40,7 +40,7 @@ config = dict(name='scraperwiki',
 
 try:
     from setuptools import setup
-    config['install_requires'] = ['dumptruck>=0.1.2', 'requests'],
+    config['install_requires'] = ['dumptruck>=0.1.6', 'requests'],
 except ImportError:
     pass
 

@@ -4,11 +4,14 @@ import re
 import os
 
 DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME", "scraperwiki.sqlite")
+DATABASE_TIMEOUT = float(os.environ.get("SCRAPERWIKI_DATABASE_TIMEOUT", 300))
 
-def _connect(dbname = DATABASE_NAME):
+def _connect(dbname=DATABASE_NAME, timeout=DATABASE_TIMEOUT):
   'Initialize the database (again). This is mainly for testing'
   global dt
-  dt = DumpTruck(dbname = dbname,  adapt_and_convert = False)
+  dt = DumpTruck(dbname=dbname,
+                 adapt_and_convert=False,
+                 timeout=timeout)
 
 _connect()
 
