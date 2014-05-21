@@ -104,7 +104,7 @@ other SQL databases at a later date.</p>
         status API</a> in the documentation for details.
     </dd>
 
-<dt>scraperwiki.<strong>pdftoxml</strong>(pdfdata, options='')</dt>
+<dt>scraperwiki.<strong>pdftoxml</strong>(pdfdata)</dt>
     <dd>Convert a byte string containing a PDF file into an XML file containing the coordinates 
         and font of each text string (see <a href="http://linux.die.net/man/1/pdftohtml">the pdftohtml documentation</a> for details).<br/>
     </dd>
