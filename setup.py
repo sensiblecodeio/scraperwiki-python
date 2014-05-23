@@ -15,8 +15,9 @@ def has_external_dependency(name):
 
 if not has_external_dependency('pdftohtml'):
     warnings.warn(
-        'Local Scraperlibs requires pdftohtml, but pdftohtml was not found\n'
-        'in the PATH. You probably need to install it.'
+        'scraperwiki.pdftoxml requires pdftohtml, but pdftohtml was not found\n'
+        'in the PATH. If you wish to use this function, you probably need to\n'
+        'install pdftohtml.'
     )
 
 config = dict(name='scraperwiki',
