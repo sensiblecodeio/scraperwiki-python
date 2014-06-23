@@ -18,7 +18,7 @@ import requests
 def scrape(url, params = None, user_agent = None) :
     '''
     Scrape a URL optionally with parameters.
-    This is effectively a wrapper around urllib2.orlopen.
+    This is effectively a wrapper around urllib2.urlopen.
     '''
 
     headers = {}
