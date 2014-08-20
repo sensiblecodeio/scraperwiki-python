@@ -37,7 +37,7 @@ class _Buffer(object):
 
     buffered_saves = []
     buffered_table = None
-    unique_keys = []
+    unique_keys = None
     flushing = False
 
     # time after which records should be automatically flushed.
