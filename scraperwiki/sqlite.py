@@ -49,13 +49,11 @@ class _Buffer(object):
     def flush(cls):
         if cls.flushing:
             raise RuntimeError("Double flush")
+
+        if not cls.buffered_saves:
             return
 
         cls.flushing = True
-
-        if not cls.buffered_saves:
-            cls.flushing = False
-            return
 
         real_save(cls.unique_keys, cls.buffered_saves, cls.buffered_table)
 
