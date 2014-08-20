@@ -143,6 +143,7 @@ class SaveAndCheck(TestDb):
 
         # Insert
         scraperwiki.sqlite.save([], dataIn, tableIn)
+        scraperwiki.sqlite.flush()
 
         # Observe with pysqlite
         connection = sqlite3.connect(self.DBNAME)
@@ -301,6 +302,8 @@ class TestDateTime(TestDb):
     def test_save_date(self):
         d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d').date()
         scraperwiki.sqlite.save([], {"birthday": d})
+        scraperwiki.sqlite.flush()
+
         self.assertEqual(str(d), self.rawdate(column="birthday"))
         self.assertEqual(
             [{u'birthday': str(d)}], scraperwiki.sqlite.select("* from swdata"))
@@ -310,6 +313,8 @@ class TestDateTime(TestDb):
     def test_save_datetime(self):
         d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d')
         scraperwiki.sqlite.save([], {"birthday": d})
+        scraperwiki.sqlite.flush()
+
         self.assertEqual(str(d), self.rawdate(column="birthday"))
         self.assertEqual(
             [{u'birthday': str(d)}], scraperwiki.sqlite.select("* from swdata"))

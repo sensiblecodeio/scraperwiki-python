@@ -41,6 +41,13 @@ scraperwiki.sql.save(unique_keys, data[, table_name="swdata"])
 
   ``data`` is a dict object with field names as keys; ``unique_keys`` is a subset of data.keys() which determines when a record is overwritten. For large numbers of records `data` can be a list of dicts.
 
+  ``scraperwiki.sql.save`` is entitled to buffer an arbitrary number of
+  rows until the next read via the ScraperWiki API, an exception is hit,
+  or until process exit. An effort is made to do a timely periodic flush.
+  Records can be lost if the process experiences a hard-crash, power outage
+  or SIGKILL due to high memory usage during an out-of-memory condition. The
+  buffer can be manually flushed with ``scraperwiki.sql.flush()``.
+
 scraperwiki.sql.execute(sql[, vars])
   Executes any arbitrary SQL command. For example CREATE, DELETE, INSERT or DROP.
 
