@@ -142,7 +142,7 @@ class TestSaveVar(TestDb):
     def test_insert(self):
         self.cursor.execute("SELECT name, value_blob, type FROM `swvariables`")
         observed = self.cursor.fetchall()
-        expected = [("birthday", "November 30, 1888", "text",)]
+        expected = [("birthday", buffer("November 30, 1888"), "text",)]
         self.assertEqual(observed, expected)
 
 
