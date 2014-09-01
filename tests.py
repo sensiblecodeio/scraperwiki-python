@@ -90,7 +90,6 @@ class TestException(TestDb):
         then = datetime.datetime.strptime(l[0]['time'], '%Y-%m-%d %H:%M:%S.%f')
         assert (datetime.datetime.now() - then).total_seconds() < 5 * 60
 
-
 class TestSaveGetVar(TestDb):
 
     def savegetvar(self, var):
