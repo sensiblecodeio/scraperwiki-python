@@ -200,8 +200,8 @@ class TestUniqueKeys(SaveAndSelect):
 
         # Indexed columns
         expected = {
-            'keys': [u'seqno', u'cid', u'name'],
-            'data': [
+            u'keys': [u'seqno', u'cid', u'name'],
+            u'data': [
                 [0, 0, u'foo'],
                 [1, 1, u'bar'],
             ]
