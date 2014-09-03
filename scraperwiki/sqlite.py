@@ -112,7 +112,7 @@ def save(unique_keys, data, table_name=None):
     else:
         table_name = _State.table_name
 
-    _State.connection()
+    connection = _State.connection()
 
     if isinstance(data, Mapping):
         # Is a single datum
