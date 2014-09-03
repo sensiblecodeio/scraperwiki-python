@@ -9,19 +9,23 @@ import time
 import sys
 
 
-DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME", "scraperwiki.sqlite")
+DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME",
+                               "scraperwiki.sqlite")
 DATABASE_TIMEOUT = float(os.environ.get("SCRAPERWIKI_DATABASE_TIMEOUT", 300))
 
+
 def _connect(dbname=DATABASE_NAME, timeout=DATABASE_TIMEOUT):
-  'Initialize the database (again). This is mainly for testing'
-  global dt
-  dt = DumpTruck(dbname=dbname,
-                 adapt_and_convert=False,
-                 timeout=timeout)
+    'Initialize the database (again). This is mainly for testing'
+    global dt
+    dt = DumpTruck(dbname=dbname,
+                   adapt_and_convert=False,
+                   timeout=timeout)
 
 _connect()
 
+
 class _Buffer(object):
+
     """
     Buffer holds all state relating to scraperwiki.sqlite.save.
 
@@ -100,11 +104,13 @@ class _Buffer(object):
             # print "Flush deadline passed"
             cls.flush()
 
+
 def flush():
     """
     Ensure that any buffered records are written out to sqlite
     """
     _Buffer.flush()
+
 
 @atexit.register
 def _finish():
@@ -121,6 +127,8 @@ def _finish():
     flush()
 
 _ORIG_EXCEPTHOOK = sys.excepthook
+
+
 def _excepthook(*args, **kwargs):
     # print "Flushing due to exception"
     if not _Buffer.flushing:
@@ -128,8 +136,11 @@ def _excepthook(*args, **kwargs):
     return _ORIG_EXCEPTHOOK(*args, **kwargs)
 sys.excepthook = _excepthook
 
+
 def execute(sqlquery, data=[], verbose=1):
-    """ Emulate scraperwiki as much as possible by mangling dumptruck result """
+    """
+    Emulate scraperwiki as much as possible by mangling dumptruck result
+    """
     flush()
 
     # Allow for a non-list to be passed as data.
@@ -145,36 +156,43 @@ def execute(sqlquery, data=[], verbose=1):
     return {u'data': map(lambda row: map(dtos, row.values()), result),
             u'keys': result[0].keys()}
 
+
 def save(unique_keys, data, table_name="swdata", verbose=2, date=None):
     if not data:
         return
     _Buffer.append(unique_keys, data, table_name)
 
+
 def real_save(unique_keys, data, table_name="swdata", verbose=2, date=None):
     # print "Real save called, len(data) = {}".format(len(data))
     if not data:
         return
-    dt.create_table(data, table_name = table_name, error_if_exists = False)
+    dt.create_table(data, table_name=table_name, error_if_exists=False)
     if unique_keys != []:
-        dt.create_index(unique_keys, table_name, unique = True, if_not_exists = True)
-    return dt.upsert(data, table_name = table_name)
+        dt.create_index(
+            unique_keys, table_name, unique=True, if_not_exists=True)
+    return dt.upsert(data, table_name=table_name)
+
 
 def commit(verbose=1):
     flush()
     dt.commit()
 
+
 def select(sqlquery, data=[], verbose=1):
     flush()
-    sqlquery = "select %s" % sqlquery   # maybe check if select or another command is there already?
-    result = dt.execute(sqlquery, data, commit = False)
+    # maybe check if select or another command is there already?
+    sqlquery = "select %s" % sqlquery
+    result = dt.execute(sqlquery, data, commit=False)
     # Convert dates to strings to conform to scraperwiki classic
     if result != []:
-      keys = result[0].keys()
-      for row in result:
-        for key in keys:
-          if isinstance(row[key], datetime.date):
-            row[key] = str(row[key])
+        keys = result[0].keys()
+        for row in result:
+            for key in keys:
+                if isinstance(row[key], datetime.date):
+                    row[key] = str(row[key])
     return result
+
 
 def show_tables(dbname=""):
     flush()
@@ -184,29 +202,43 @@ def show_tables(dbname=""):
     response = select('name, sql from %s where type = "table";' % name)
     return {row['name']: row['sql'] for row in response}
 
+
 def save_var(name, value, verbose=2):
     flush()
     data = dt.save_var(name, value)
-    dt.execute(u"CREATE TABLE IF NOT EXISTS swvariables (`value_blob` blob, `type` text, `name` text PRIMARY KEY)", commit = False)
-    dt.execute(u'INSERT OR REPLACE INTO swvariables SELECT `value`, `type`, `key` FROM `%s`' % dt._DumpTruck__vars_table, commit = False)
-    dt.execute(u'DROP TABLE `%s`' % dt._DumpTruck__vars_table, commit = False)
+    dt.execute(u"CREATE TABLE IF NOT EXISTS swvariables "
+               u"(`value_blob` blob, `type` text, `name` text PRIMARY KEY)",
+               commit=False)
+    dt.execute(u'INSERT OR REPLACE INTO swvariables '
+               u'SELECT `value`, `type`, `key` FROM `%s`' %
+               dt._DumpTruck__vars_table,
+               commit=False)
+    dt.execute(u'DROP TABLE `%s`' % dt._DumpTruck__vars_table, commit=False)
     dt.commit()
     return data
 
+
 def get_var(name, default=None, verbose=2):
     flush()
-    if 'swvariables' not in show_tables(): # this should be unecessary
+    if 'swvariables' not in show_tables():  # this should be unecessary
         return default
-    dt.execute(u"CREATE TABLE IF NOT EXISTS swvariables (`value_blob` blob, `type` text, `name` text PRIMARY KEY)", commit = False)
-    dt.execute(u"CREATE TEMPORARY TABLE IF NOT EXISTS %s (`value` blob, `type` text, `key` text PRIMARY KEY)" % dt._DumpTruck__vars_table, commit = False)
+    dt.execute(u"CREATE TABLE IF NOT EXISTS swvariables "
+               u"(`value_blob` blob, `type` text, `name` text PRIMARY KEY)",
+               commit=False)
+    dt.execute(u"CREATE TEMPORARY TABLE IF NOT EXISTS "
+               u"%s (`value` blob, `type` text, `key` text PRIMARY KEY)" %
+               dt._DumpTruck__vars_table,
+               commit=False)
 
-    sql = u'INSERT INTO `%s` (value, type, key) SELECT `value_blob`, `type`, `name` FROM `swvariables`' % dt._DumpTruck__vars_table
-    dt.execute(sql, commit = False)
+    sql = (u'INSERT INTO `%s` (value, type, key) '
+           u'SELECT `value_blob`, `type`, `name` FROM `swvariables`'
+           ) % dt._DumpTruck__vars_table
+    dt.execute(sql, commit=False)
     try:
         value = dt.get_var(name)
     except NameError:
         dt.connection.rollback()
         return default
-    dt.execute(u'DROP TABLE `%s`' % dt._DumpTruck__vars_table, commit = False)
+    dt.execute(u'DROP TABLE `%s`' % dt._DumpTruck__vars_table, commit=False)
     dt.commit()
     return value
