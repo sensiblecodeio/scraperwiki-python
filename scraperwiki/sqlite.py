@@ -48,6 +48,7 @@ class _State(object):
     metadata = None
     table = None
     table_name = 'swdata'
+    table_pending = True
     vars_table_name = 'swvariables'
     
     @classmethod
@@ -127,8 +128,8 @@ def save(unique_keys, data, table_name=None):
         insert.values(row).execute()
 
 def set_table(table_name):
-    table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
-    _State.metadata.create_all(_State.engine)
+    _State.table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
+    _State.table_pending = True
     _State.table_name = table_name
 
 def show_tables():
@@ -206,6 +207,10 @@ def fit_row(row):
         if not str(new_column) in _State.table.columns:
             new_columns.append(new_column)
             _State.table.append_column(new_column)
+
+    if _State.table_pending:
+        _State.metadata.create_all(_State.engine)
+        _State.table_pending = False
 
     if original_columns != list(_State.table.columns) and original_columns != []:
         for new_column in new_columns:
