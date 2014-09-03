@@ -12,10 +12,12 @@ import os
 import sys
 import warnings
 import tempfile
-import urllib, urllib2
+import urllib
+import urllib2
 import requests
 
-def scrape(url, params = None, user_agent = None) :
+
+def scrape(url, params=None, user_agent=None):
     '''
     Scrape a URL optionally with parameters.
     This is effectively a wrapper around urllib2.urlopen.
@@ -35,6 +37,7 @@ def scrape(url, params = None, user_agent = None) :
 
     return text
 
+
 def pdftoxml(pdfdata):
     """converts pdf file to xml file"""
     pdffout = tempfile.NamedTemporaryFile(suffix='.pdf')
@@ -42,9 +45,11 @@ def pdftoxml(pdfdata):
     pdffout.flush()
 
     xmlin = tempfile.NamedTemporaryFile(mode='r', suffix='.xml')
-    tmpxml = xmlin.name # "temph.xml"
-    cmd = 'pdftohtml -xml -nodrm -zoom 1.5 -enc UTF-8 -noframes "%s" "%s"' % (pdffout.name, os.path.splitext(tmpxml)[0])
-    cmd = cmd + " >/dev/null 2>&1" # can't turn off output, so throw away even stderr yeuch
+    tmpxml = xmlin.name  # "temph.xml"
+    cmd = 'pdftohtml -xml -nodrm -zoom 1.5 -enc UTF-8 -noframes "%s" "%s"' % (
+        pdffout.name, os.path.splitext(tmpxml)[0])
+    # can't turn off output, so throw away even stderr yeuch
+    cmd = cmd + " >/dev/null 2>&1"
     os.system(cmd)
 
     pdffout.close()
@@ -53,8 +58,10 @@ def pdftoxml(pdfdata):
     xmlin.close()
     return xmldata
 
+
 def _in_box():
-  return os.environ.get('HOME', None) == '/home'
+    return os.environ.get('HOME', None) == '/home'
+
 
 def status(type, message=None):
     assert type in ['ok', 'error']
@@ -69,10 +76,6 @@ def status(type, message=None):
         return
 
     # send status update to the box
-    r = requests.post(url, data={'type':type, 'message':message})
+    r = requests.post(url, data={'type': type, 'message': message})
     r.raise_for_status()
     return r.content
-
-
-
-

@@ -7,7 +7,7 @@ https://scraperwiki.com/docs/python/python_help_documentation/
 '''
 
 from .utils import scrape, pdftoxml, status
-import utils, sqlite
+import utils
+import sqlite
 
 sql = sqlite
-
