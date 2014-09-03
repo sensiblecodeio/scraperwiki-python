@@ -46,7 +46,8 @@ class _State(object):
     _connection = None
     _transaction = None
     metadata = None
-    table_name = 'swdada'
+    table = None
+    table_name = 'swdata'
     vars_table_name = 'swvariables'
     
     @classmethod
@@ -56,6 +57,9 @@ class _State(object):
                     connect_args={'timeout': DATABASE_TIMEOUT})
             cls._connection = cls.engine.connect()
             cls.new_transaction()
+        cls.reflect_metadata()
+        cls.table = sqlalchemy.Table(cls.table_name, _State.metadata,
+                                     extend_existing=True)
         return cls._connection
 
     @classmethod
@@ -110,6 +114,8 @@ def save(unique_keys, data, table_name=None):
 
 
 def set_table(table_name):
+    table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
+    _State.metadata.create_all(_State.engine)
     _State.table_name = table_name
 
 def show_tables():
