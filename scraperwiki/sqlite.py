@@ -123,8 +123,7 @@ def save(unique_keys, data, table_name=None):
 
     insert = _State.table.insert(prefixes=['OR REPLACE'])
     for row in data:
-        fit_row(row)
-        _State.metadata.create_all(_State.engine)
+        fit_row(connection, row)
         insert.values(row).execute()
 
 def set_table(table_name):
@@ -182,22 +181,12 @@ def create_index(column_names, table_name, unique=False):
     if index.name not in current_indices:
         index.create(bind=_State.engine)
 
-def fit_row(row):
+def fit_row(connection, row):
     """
     Takes a row and checks to make sure it fits in the columns of the
     current table. If it does not fit, adds the required columns.
     """
-    connection = _State.connection()
-
-    all_none = True
-    for value in row.values():
-        if value is not None:
-            all_none = False
-            break
-
-    if len(row) == 0 or all_none:
-        raise ValueError('You passed no sample values, or all the values \
-                          you passed were None.')
+    _State.reflect_metadata()
 
     original_columns = list(_State.table.columns)
 
