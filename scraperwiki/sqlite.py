@@ -104,14 +104,27 @@ def select(query, data=None):
     return rows
 
 def save(unique_keys, data, table_name=None):
-    _State.connection()
-
     if table_name is not None:
         warnings.warn("scraperwiki.sql.save table_name is deprecated, \
                 call scraperwiki.sql.set_table instead")
+        table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
     else:
         table_name = _State.table_name
 
+    _State.connection()
+
+    if isinstance(data, Mapping):
+        # Is a single datum
+        data = [data]
+    elif not isinstance(data, Iterable):
+        raise TypeError("Data must be a single mapping or an iterable \
+                         of mappings")
+
+    insert = _State.table.insert(prefixes=['OR REPLACE'])
+    for row in data:
+        fit_row(row)
+        _State.metadata.create_all(_State.engine)
+        insert.values(row).execute()
 
 def set_table(table_name):
     table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
@@ -168,53 +181,39 @@ def create_index(column_names, table_name, unique=False):
     if index.name not in current_indices:
         index.create(bind=_State.engine)
 
-def create_table(data, table_name):
+def fit_row(row):
     """
-    Create a new table with name table_name and column names and types
-    based on the first element of data. Data can be a single data element,
-    or a list of data elements where a data element is a dictionaries or
-    OrderedDicts keyed by column name. If the table already exists, it
-    will be altered to include any new columns.
+    Takes a row and checks to make sure it fits in the columns of the
+    current table. If it does not fit, adds the required columns.
     """
     connection = _State.connection()
-    _State.reflect_metadata()
-
-    if type(data) == OrderedDict or type(data) == dict:
-        startdata = data
-    else:
-        if len(data) > 0:
-            startdata = data[0]
-        else:
-            startdata = {}
 
     all_none = True
-    for value in startdata.values():
+    for value in row.values():
         if value is not None:
             all_none = False
             break
 
-    if len(data) == 0 or all_none:
+    if len(row) == 0 or all_none:
         raise ValueError('You passed no sample values, or all the values \
                           you passed were None.')
 
-    table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
-    original_columns = list(table.columns)
+    original_columns = list(_State.table.columns)
 
     new_columns = []
-    for column_name, column_value in startdata.items():
+    for column_name, column_value in row.items():
         new_column = sqlalchemy.Column(column_name, get_column_type(column_value))
-        if not str(new_column) in table.columns:
+        if not str(new_column) in _State.table.columns:
             new_columns.append(new_column)
-            table.append_column(new_column)
+            _State.table.append_column(new_column)
 
-    _State.metadata.create_all(_State.engine)
-
-    if original_columns != list(table.columns) and original_columns != []:
+    if original_columns != list(_State.table.columns) and original_columns != []:
         for new_column in new_columns:
             query = 'ALTER TABLE {} ADD {} {}'
-            query.format(table_name, new_column.name, new_column.type)
+            query = query.format(_State.table_name, new_column.name, new_column.type)
             s = sqlalchemy.sql.text(query)
-            s.execute()
+            connection.execute(s)
+            _State.reflect_metadata()
 
 def get_column_type(column_value):
     """
