@@ -58,9 +58,10 @@ class _State(object):
                     connect_args={'timeout': DATABASE_TIMEOUT})
             cls._connection = cls.engine.connect()
             cls.new_transaction()
-        cls.reflect_metadata()
-        cls.table = sqlalchemy.Table(cls.table_name, _State.metadata,
-                                     extend_existing=True)
+        if cls.table is None:
+            cls.reflect_metadata()
+            cls.table = sqlalchemy.Table(cls.table_name, _State.metadata,
+                                         extend_existing=True)
         return cls._connection
 
     @classmethod
@@ -191,8 +192,6 @@ def fit_row(connection, row, unique_keys):
     Takes a row and checks to make sure it fits in the columns of the
     current table. If it does not fit, adds the required columns.
     """
-    _State.reflect_metadata()
-
     original_columns = list(_State.table.columns)
 
     new_columns = []
