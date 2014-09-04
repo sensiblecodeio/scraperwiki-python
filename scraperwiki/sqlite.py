@@ -123,7 +123,7 @@ def save(unique_keys, data, table_name=None):
     insert = _State.table.insert(prefixes=['OR REPLACE'])
     for row in data:
         fit_row(connection, row, unique_keys)
-        insert.values(row).execute()
+        connection.execute(insert.values(row))
 
 def set_table(table_name):
     _State.connection()
