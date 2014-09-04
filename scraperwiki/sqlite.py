@@ -210,7 +210,7 @@ def fit_row(connection, row, unique_keys):
 
     if original_columns != list(_State.table.columns) and original_columns != []:
         for new_column in new_columns:
-            query = 'ALTER TABLE {} ADD {} {}'
+            query = "ALTER TABLE {} ADD '{}' {}"
             query = query.format(_State.table_name, new_column.name, new_column.type)
             s = sqlalchemy.sql.text(query)
             connection.execute(s)
