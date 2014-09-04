@@ -92,11 +92,10 @@ def execute(query, data=None):
 def select(query, data=None):
     connection = _State.connection()
     _State.new_transaction()
-
     if data is None:
         data = []
 
-    result = connection.execute(query, data)
+    result = connection.execute('select ' + query, data)
 
     rows = []
     for row in result:
