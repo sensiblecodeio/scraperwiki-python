@@ -204,7 +204,8 @@ def fit_row(connection, row, unique_keys):
 
     if _State.table_pending:
         _State.table.create(bind=_State.engine, checkfirst=True)
-        create_index(unique_keys, unique=True)
+        if unique_keys != []:
+            create_index(unique_keys, unique=True)
         _State.table_pending = False
 
     if original_columns != list(_State.table.columns) and original_columns != []:
