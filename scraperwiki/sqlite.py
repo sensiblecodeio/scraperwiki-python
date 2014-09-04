@@ -82,6 +82,11 @@ class _State(object):
 atexit.register(_State.new_transaction)
 
 def execute(query, data=None):
+    """
+    Execute an arbitrary SQL query given by query, returning any
+    results as a list of OrderedDicts. A list of values can be supplied as an,
+    additional argument, which will be substituted into question marks in the query.
+    """
     connection = _State.connection()
     _State.new_transaction()
 
@@ -96,6 +101,10 @@ def execute(query, data=None):
     return {u'data': result.fetchall(), u'keys': result.keys()}
 
 def select(query, data=None):
+    """
+    Perform a sql select statement with the given query (without 'select') and
+    return any results as a list of OrderedDicts.
+    """
     connection = _State.connection()
     _State.new_transaction()
     if data is None:
@@ -110,6 +119,11 @@ def select(query, data=None):
     return rows
 
 def save(unique_keys, data, table_name=None):
+    """
+    Save the given data to the current table. The data must be a mapping
+    or an iterable of mappings. Unique keys is a list of keys that exist
+    for all rows and for which a unique index will be created.
+    """
     if table_name is not None:
         warnings.warn('''scraperwiki.sql.save table_name is deprecated,
                          call scraperwiki.sql.set_table instead''')
@@ -133,6 +147,9 @@ def save(unique_keys, data, table_name=None):
         connection.execute(insert.values(row))
 
 def set_table(table_name):
+    """
+    Specify the table to work on.
+    """
     _State.connection()
     _State.reflect_metadata()
     _State.table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
@@ -140,6 +157,9 @@ def set_table(table_name):
     _State.table_name = table_name
 
 def show_tables():
+    """
+    Return the names of the tables currently in the database.
+    """
     _State.connection()
     _State.reflect_metadata()
     metadata = _State.metadata
@@ -150,7 +170,7 @@ def show_tables():
 
 def save_var(name, value):
     """
-    Save a variable to the table specified by self.vars_table. Key is
+    Save a variable to the table specified by _State.vars_table_name. Key is
     the name of the variable, and value is the value.
     """
     connection = _State.connection()
@@ -173,7 +193,7 @@ def save_var(name, value):
 def get_var(name, default=None):
     """
     Returns the variable with the provided key from the
-    table specified by self.vars_table.
+    table specified by _State.vars_table_name.
     """
     connection = _State.connection()
     _State.new_transaction()
@@ -200,10 +220,8 @@ def get_var(name, default=None):
 def create_index(column_names, unique=False):
     """
     Create a new index of the columns in column_names, where column_names is
-    a list of strings, on table table_name. If unique is True, it will be a
-    unique index. If if_not_exists is True, the index be checked to make sure
-    it does not already exists, otherwise creating duplicate
-    indices will result in an error.
+    a list of strings. If unique is True, it will be a
+    unique index.
     """
     connection = _State.connection()
     _State.reflect_metadata()
@@ -245,6 +263,9 @@ def fit_row(connection, row, unique_keys):
         add_column(connection, new_column.name, new_column.type)
 
 def create_table(unique_keys):
+    """
+    Save the table currently waiting to be created.
+    """
     _State.new_transaction()
     _State.table.create(bind=_State.engine, checkfirst=True)
     if unique_keys != []:
@@ -252,6 +273,9 @@ def create_table(unique_keys):
     _State.table_pending = False
 
 def add_column(connection, column_name, column_type):
+    """
+    Add a column to the current table.
+    """
     query = "ALTER TABLE {} ADD '{}' {}"
     query = query.format(_State.table_name, column_name, column_type)
     s = sqlalchemy.sql.text(query)
