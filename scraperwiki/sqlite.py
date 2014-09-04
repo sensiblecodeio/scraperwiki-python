@@ -139,21 +139,53 @@ def show_tables():
     return {row['name']: row['sql'] for row in response}
 
 def save_var(name, value):
-    _State.connection()
+    """
+    Save a variable to the table specified by self.vars_table. Key is
+    the name of the variable, and value is the value.
+    """
+    connection = _State.connection()
+    _State.reflect_metadata()
 
-    table_name = _State.table_name
+    vars_table = sqlalchemy.Table(_State.vars_table_name, _State.metadata,
+            sqlalchemy.Column('key', sqlalchemy.types.Text, primary_key=True),
+            sqlalchemy.Column('value', sqlalchemy.types.LargeBinary),
+            sqlalchemy.Column('type', sqlalchemy.types.Text),
+            keep_existing=True
+    )
 
-    raise NotImplementedError()
-    return data
+    vars_table.create(bind=connection, checkfirst=True)
+
+    column_type = get_column_type(value)
+
+    vars_table.insert().values(key=name, value=Blob(value),
+            type=column_type.__visit_name__.lower()).execute()
 
 def get_var(name, default=None):
-    _State.connection()
+    """
+    Returns the variable with the provided key from the
+    table specified by self.vars_table.
+    """
+    connection = _State.connection()
     _State.new_transaction()
 
-    table_name = _State.table_name
+    if _State.vars_table_name not in _State.metadata.tables.keys():
+        raise NameError('The variables table doesn\'t exist.')
 
-    raise NotImplementedError()
-    return value
+    table = sqlalchemy.Table(_State.vars_table_name, _State.metadata)
+
+    s = sqlalchemy.select([table.c.value, table.c.type]).where(table.c.key == name)
+    result = connection.execute(s).fetchone()
+
+    if not result:
+        raise NameError('The variables table doesn\'t have a value for %s.' % key)
+
+    # This is to do the variable type conversion through the SQL engine
+    connection.execute("CREATE TEMPORARY TABLE _sw_tmp ('value' {0})".format(result.type))
+    connection.execute("INSERT INTO _sw_tmp VALUES (:value)", value=result.value)
+    var = connection.execute('SELECT value FROM _sw_tmp').fetchone().value
+    connection.execute("DROP TABLE _sw_tmp")
+
+    return var
 
 def create_index(column_names, unique=False):
     """
