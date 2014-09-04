@@ -167,7 +167,7 @@ def save_var(name, value):
 
     column_type = get_column_type(value)
 
-    vars_table.insert().values(key=name, value=Blob(value),
+    vars_table.insert(prefixes=['OR REPLACE']).values(key=name, value=Blob(value),
             type=column_type.__visit_name__.lower()).execute()
 
 def get_var(name, default=None):
