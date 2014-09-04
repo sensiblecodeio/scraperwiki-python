@@ -19,7 +19,6 @@ class TestDb(TestCase):
 
     def setUp(self):
         self.cleanUp()
-        scraperwiki.sqlite._connect(self.DBNAME)
 
     def tearDown(self):
         self.cleanUp()
