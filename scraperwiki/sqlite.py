@@ -105,9 +105,9 @@ def select(query, data=None):
 
 def save(unique_keys, data, table_name=None):
     if table_name is not None:
-        warnings.warn("scraperwiki.sql.save table_name is deprecated, \
-                call scraperwiki.sql.set_table instead")
-        table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
+        warnings.warn('''scraperwiki.sql.save table_name is deprecated,
+                         call scraperwiki.sql.set_table instead''')
+        set_table(table_name)
     else:
         table_name = _State.table_name
 
