@@ -193,7 +193,7 @@ class TestUniqueKeys(SaveAndSelect):
     def test_two(self):
         scraperwiki.sqlite.save(['foo', 'bar'], {"foo": 3, 'bar': 9}, u'Harpo')
         observed = scraperwiki.sqlite.execute(
-            u'PRAGMA index_info(Harpo_foo_bar)')
+            u'PRAGMA index_info(Harpo_foo_bar_unique)')
 
         # Indexness
         self.assertIsNotNone(observed)
@@ -212,7 +212,7 @@ class TestUniqueKeys(SaveAndSelect):
         indices = scraperwiki.sqlite.execute('PRAGMA index_list(Harpo)')
         namecol = indices[u"keys"].index(u'name')
         for index in indices[u"data"]:
-            if index[namecol] == u'Harpo_foo_bar':
+            if index[namecol] == u'Harpo_foo_bar_unique':
                 break
         else:
             index = {}
