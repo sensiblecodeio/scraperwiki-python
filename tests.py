@@ -185,7 +185,8 @@ class SaveAndSelect(TestDb):
 class TestUniqueKeys(SaveAndSelect):
 
     def test_empty(self):
-        scraperwiki.sqlite.save([], {"foo": 3}, u'Chico')
+        scraperwiki.sqlite.set_table(u'Chico')
+        scraperwiki.sqlite.save([], {"foo": 3})
         observed = scraperwiki.sqlite.execute(u'PRAGMA index_list(Chico)')
         self.assertEqual(observed, {u'data': [], u'keys': []})
 
