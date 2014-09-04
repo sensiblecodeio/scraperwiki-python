@@ -209,6 +209,7 @@ def fit_row(connection, row, unique_keys):
         add_column(connection, new_column.name, new_column.type)
 
 def create_table(unique_keys):
+    _State.new_transaction()
     _State.table.create(bind=_State.engine, checkfirst=True)
     if unique_keys != []:
         create_index(unique_keys, unique=True)
