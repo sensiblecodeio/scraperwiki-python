@@ -54,7 +54,7 @@ class _State(object):
     @classmethod
     def connection(cls):
         if cls._connection is None:
-            cls.engine = sqlalchemy.create_engine(cls.db_path, echo=True,
+            cls.engine = sqlalchemy.create_engine(cls.db_path, echo=False,
                     connect_args={'timeout': DATABASE_TIMEOUT})
             cls._connection = cls.engine.connect()
             cls.new_transaction()
