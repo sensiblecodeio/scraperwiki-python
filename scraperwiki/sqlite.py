@@ -1,5 +1,4 @@
 from collections import Iterable, Mapping, OrderedDict
-from sqlalchemy.dialects.sqlite import TEXT, INTEGER, BOOLEAN, REAL, DATE, DATETIME, BLOB
 
 import atexit
 import datetime
@@ -8,29 +7,27 @@ import re
 import warnings
 import sqlalchemy
 
-DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME", "scraperwiki.sqlite")
+DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME", "sqlite:///scraperwiki.sqlite")
 DATABASE_TIMEOUT = float(os.environ.get("SCRAPERWIKI_DATABASE_TIMEOUT", 300))
 
 class Blob(str):
     """
     Represents a blob as a string.
     """
-    def __init__(self, *args, **kwargs):
-        super(Blob, self).__init__(*args, **kwargs)
 
 PYTHON_SQLITE_TYPE_MAP = {
-    unicode: TEXT,
-    str: TEXT,
+    unicode: sqlalchemy.types.Text,
+    str: sqlalchemy.types.Text,
 
-    int: INTEGER,
-    long: REAL,
-    bool: BOOLEAN,
-    float: REAL,
+    int: sqlalchemy.types.Integer,
+    long: sqlalchemy.types.BigInteger,
+    bool: sqlalchemy.types.Boolean,
+    float: sqlalchemy.types.Float,
 
-    datetime.date: DATE,
-    datetime.datetime: DATETIME,
+    datetime.date: sqlalchemy.types.Date,
+    datetime.datetime: sqlalchemy.types.DateTime,
 
-    Blob: BLOB
+    Blob: sqlalchemy.types.LargeBinary
 }
 
 class _State(object):
