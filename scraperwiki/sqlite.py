@@ -35,7 +35,7 @@ class _State(object):
     This class maintains global state relating to the database such as
     table_name, connection. It does not form part of the public interface.
     """
-    db_path = 'sqlite:///{}'.format(DATABASE_NAME)
+    db_path = DATABASE_NAME
     engine = None
     _connection = None
     _transaction = None
