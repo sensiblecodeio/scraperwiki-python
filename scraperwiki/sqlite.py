@@ -5,8 +5,6 @@ import atexit
 import datetime
 import os
 import re
-import time
-import sys
 import warnings
 import sqlalchemy
 
@@ -34,7 +32,6 @@ PYTHON_SQLITE_TYPE_MAP = {
 
     Blob: BLOB
 }
-
 
 class _State(object):
     """
