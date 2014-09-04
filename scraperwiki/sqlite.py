@@ -76,6 +76,8 @@ class _State(object):
             cls.metadata = sqlalchemy.MetaData(bind=cls.engine)
         cls.metadata.reflect()
 
+atexit.register(_State.new_transaction)
+
 def execute(query, data=None):
     connection = _State.connection()
     _State.new_transaction()
