@@ -126,14 +126,19 @@ def save(unique_keys, data, table_name=None):
         insert.values(row).execute()
 
 def set_table(table_name):
+    _State.connection()
+    _State.reflect_metadata()
     _State.table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
     _State.table_pending = True
     _State.table_name = table_name
 
 def show_tables():
     _State.connection()
+    _State.reflect_metadata()
+    metadata = _State.metadata
 
-    raise NotImplementedError()
+    response = select('name, sql from sqlite_master where type="table"')
+
     return {row['name']: row['sql'] for row in response}
 
 def save_var(name, value):
