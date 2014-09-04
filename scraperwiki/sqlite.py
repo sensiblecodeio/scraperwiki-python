@@ -122,7 +122,7 @@ def save(unique_keys, data, table_name=None):
 
     insert = _State.table.insert(prefixes=['OR REPLACE'])
     for row in data:
-        fit_row(connection, row)
+        fit_row(connection, row, unique_keys)
         insert.values(row).execute()
 
 def set_table(table_name):
@@ -153,7 +153,7 @@ def get_var(name, default=None):
     raise NotImplementedError()
     return value
 
-def create_index(column_names, table_name, unique=False):
+def create_index(column_names, unique=False):
     """
     Create a new index of the columns in column_names, where column_names is
     a list of strings, on table table_name. If unique is True, it will be a
@@ -163,6 +163,7 @@ def create_index(column_names, table_name, unique=False):
     """
     connection = _State.connection()
     _State.reflect_metadata()
+    table_name = _State.table_name
 
     table = sqlalchemy.Table(table_name, _State.metadata)
 
@@ -180,7 +181,7 @@ def create_index(column_names, table_name, unique=False):
     if index.name not in current_indices:
         index.create(bind=_State.engine)
 
-def fit_row(connection, row):
+def fit_row(connection, row, unique_keys):
     """
     Takes a row and checks to make sure it fits in the columns of the
     current table. If it does not fit, adds the required columns.
@@ -197,7 +198,8 @@ def fit_row(connection, row):
             _State.table.append_column(new_column)
 
     if _State.table_pending:
-        _State.metadata.create_all(_State.engine)
+        _State.table.create(bind=_State.engine, checkfirst=True)
+        create_index(unique_keys, unique=True)
         _State.table_pending = False
 
     if original_columns != list(_State.table.columns) and original_columns != []:
