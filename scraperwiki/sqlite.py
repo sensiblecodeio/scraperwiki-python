@@ -194,8 +194,6 @@ def fit_row(connection, row, unique_keys):
     Takes a row and checks to make sure it fits in the columns of the
     current table. If it does not fit, adds the required columns.
     """
-    original_columns = list(_State.table.columns)
-
     new_columns = []
     for column_name, column_value in row.items():
         new_column = sqlalchemy.Column(column_name, get_column_type(column_value))
@@ -204,18 +202,24 @@ def fit_row(connection, row, unique_keys):
             _State.table.append_column(new_column)
 
     if _State.table_pending:
-        _State.table.create(bind=_State.engine, checkfirst=True)
-        if unique_keys != []:
-            create_index(unique_keys, unique=True)
-        _State.table_pending = False
+        create_table(unique_keys)
+        return
 
-    if original_columns != list(_State.table.columns) and original_columns != []:
-        for new_column in new_columns:
-            query = "ALTER TABLE {} ADD '{}' {}"
-            query = query.format(_State.table_name, new_column.name, new_column.type)
-            s = sqlalchemy.sql.text(query)
-            connection.execute(s)
-            _State.reflect_metadata()
+    for new_column in new_columns:
+        add_column(connection, new_column.name, new_column.type)
+
+def create_table(unique_keys):
+    _State.table.create(bind=_State.engine, checkfirst=True)
+    if unique_keys != []:
+        create_index(unique_keys, unique=True)
+    _State.table_pending = False
+
+def add_column(connection, column_name, column_type):
+    query = "ALTER TABLE {} ADD '{}' {}"
+    query = query.format(_State.table_name, column_name, column_type)
+    s = sqlalchemy.sql.text(query)
+    connection.execute(s)
+    _State.reflect_metadata()
 
 def get_column_type(column_value):
     """
