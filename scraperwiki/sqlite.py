@@ -2,6 +2,7 @@ from collections import Iterable, Mapping, OrderedDict
 
 import atexit
 import datetime
+import time
 import os
 import re
 import warnings
@@ -9,6 +10,7 @@ import sqlalchemy
 
 DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME", "sqlite:///scraperwiki.sqlite")
 DATABASE_TIMEOUT = float(os.environ.get("SCRAPERWIKI_DATABASE_TIMEOUT", 300))
+SECONDS_BETWEEN_COMMIT = 2
 
 class Blob(str):
     """
@@ -44,6 +46,7 @@ class _State(object):
     table_name = 'swdata'
     table_pending = True
     vars_table_name = 'swvariables'
+    last_commit = None
     
     @classmethod
     def connection(cls):
@@ -60,6 +63,7 @@ class _State(object):
 
     @classmethod
     def new_transaction(cls):
+        cls.last_commit = time.time()
         if cls._transaction is not None:
             cls._transaction.commit()
         cls._transaction = cls._connection.begin()
@@ -69,6 +73,11 @@ class _State(object):
         if cls.metadata is None:
             cls.metadata = sqlalchemy.MetaData(bind=cls.engine)
         cls.metadata.reflect()
+
+    @classmethod
+    def check_last_committed(cls):
+        if time.time() - cls.last_commit > SECONDS_BETWEEN_COMMIT:
+            cls.new_transaction()
 
 atexit.register(_State.new_transaction)
 
@@ -119,6 +128,7 @@ def save(unique_keys, data, table_name=None):
 
     insert = _State.table.insert(prefixes=['OR REPLACE'])
     for row in data:
+        _State.check_last_committed()
         fit_row(connection, row, unique_keys)
         connection.execute(insert.values(row))
 
