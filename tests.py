@@ -202,8 +202,8 @@ class TestUniqueKeys(SaveAndSelect):
         expected = {
             u'keys': [u'seqno', u'cid', u'name'],
             u'data': [
-                [0, 0, u'foo'],
-                [1, 1, u'bar'],
+                (0, 0, u'foo'),
+                (1, 1, u'bar'),
             ]
         }
         self.assertDictEqual(observed, expected)
@@ -318,7 +318,7 @@ class TestDateTime(TestDb):
         self.assertEqual(
             [{u'birthday': str(d)}], scraperwiki.sqlite.select("* from swdata"))
         self.assertEqual(
-            {u'keys': [u'birthday'], u'data': [[str(d)]]}, scraperwiki.sqlite.execute("select * from swdata"))
+            {u'keys': [u'birthday'], u'data': ([str(d)])}, scraperwiki.sqlite.execute("select * from swdata"))
 
     def test_save_datetime(self):
         d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d')
@@ -329,7 +329,7 @@ class TestDateTime(TestDb):
         self.assertEqual(
             [{u'birthday': str(d)}], scraperwiki.sqlite.select("* from swdata"))
         self.assertEqual(
-            {u'keys': [u'birthday'], u'data': [[str(d)]]}, scraperwiki.sqlite.execute("select * from swdata"))
+            {u'keys': [u'birthday'], u'data': ([str(d)])}, scraperwiki.sqlite.execute("select * from swdata"))
 
 
 class TestStatus(TestCase):
