@@ -83,7 +83,12 @@ class _State(object):
             cls.new_transaction()
 
 class Transaction(object):
+    """
+    This context manager must be used when other services need
+    to connect to the database.
+    """
     def __enter__(self):
+        _State.connection()
         _State.new_transaction()
 
     def __exit__(self, *args):
