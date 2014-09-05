@@ -6,6 +6,8 @@ import time
 import os
 import re
 import warnings
+
+import alembic.ddl
 import sqlalchemy
 
 DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME", "sqlite:///scraperwiki.sqlite")
@@ -279,7 +281,7 @@ def fit_row(connection, row, unique_keys):
         return
 
     for new_column in new_columns:
-        add_column(connection, new_column.name, new_column.type)
+        add_column(connection, new_column)
 
 def create_table(unique_keys):
     """
@@ -292,14 +294,12 @@ def create_table(unique_keys):
     _State.table_pending = False
     _State.reflect_metadata()
 
-def add_column(connection, column_name, column_type):
+def add_column(connection, column):
     """
     Add a column to the current table.
     """
-    query = "ALTER TABLE '{}' ADD '{}' {}"
-    query = query.format(_State.table_name, column_name, column_type)
-    s = sqlalchemy.sql.text(query)
-    connection.execute(s)
+    stmt = alembic.ddl.base.AddColumn(_State.table_name, column)
+    connection.execute(stmt)
     _State.reflect_metadata()
 
 def get_column_type(column_value):
