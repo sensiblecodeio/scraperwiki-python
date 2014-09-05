@@ -10,30 +10,21 @@ import datetime
 import urllib2
 import re
 
-# This library
 import scraperwiki
 
+scraperwiki.sql._State.echo = True
 
-class TestDb(TestCase):
-    DBNAME = 'scraperwiki.sqlite'
+DB_NAME = 'scraperwiki.sqlite'
 
-    def setUp(self):
-        self.cleanUp()
-
-    def tearDown(self):
-        self.cleanUp()
-
-    def cleanUp(self):
-        "Clean up temporary files, then reinitialize."
-        if self.DBNAME != ':memory:':
-            try:
-                os.remove(self.DBNAME)
-            except OSError:
-                pass
+class Setup(TestCase):
+    def test_setup(self):
+        try:
+            os.remove('scraperwiki.sqlite')
+        except OSError:
+            pass
 
 
-class TestException(TestDb):
-
+class TestException(TestCase):
     def testExceptionSaved(self):
         script = dedent("""
             import scraperwiki.runlog
@@ -89,8 +80,7 @@ class TestException(TestDb):
         then = datetime.datetime.strptime(l[0]['time'], '%Y-%m-%d %H:%M:%S.%f')
         assert (datetime.datetime.now() - then).total_seconds() < 5 * 60
 
-class TestSaveGetVar(TestDb):
-
+class TestSaveGetVar(TestCase):
     def savegetvar(self, var):
         scraperwiki.sqlite.save_var("weird", var)
         self.assertEqual(scraperwiki.sqlite.get_var("weird"), var)
@@ -100,12 +90,6 @@ class TestSaveGetVar(TestDb):
 
     def test_int(self):
         self.savegetvar(1)
-
-    # def test_list(self):
-    #  self.savegetvar([1,2,3,4])
-
-    # def test_dict(self):
-    #  self.savegetvar({"abc":"def"})
 
     def test_date(self):
         date1 = datetime.datetime.now()
@@ -122,15 +106,11 @@ class TestSaveGetVar(TestDb):
         self.assertEqual('hello', scraperwiki.sqlite.get_var('foo'))
         self.assertEqual('goodbye', scraperwiki.sqlite.get_var('bar'))
 
-
-class TestGetNonexistantVar(TestDb):
-
+class TestGetNonexistantVar(TestCase):
     def test_get(self):
         self.assertIsNone(scraperwiki.sqlite.get_var('meatball'))
 
-
-class TestSaveVar(TestDb):
-
+class TestSaveVar(TestCase):
     def setUp(self):
         super(TestSaveVar, self).setUp()
         scraperwiki.sqlite.save_var("birthday", "November 30, 1888")
@@ -172,18 +152,14 @@ class SaveAndCheck(TestDb):
             self.assertListEqual(observed1, expected1)
             self.assertListEqual(observed2, expected2)
 
-
-class SaveAndSelect(TestDb):
-
+class SaveAndSelect(TestCase):
     def save_and_select(self, d):
         scraperwiki.sqlite.save([], {"foo": d})
-
         observed = scraperwiki.sqlite.select('* from swdata')[0]['foo']
         self.assertEqual(d, observed)
 
 
 class TestUniqueKeys(SaveAndSelect):
-
     def test_empty(self):
         scraperwiki.sqlite.set_table(u'Chico')
         scraperwiki.sqlite.save([], {"foo": 3})
@@ -220,33 +196,7 @@ class TestUniqueKeys(SaveAndSelect):
         uniquecol = indices[u"keys"].index(u'unique')
         self.assertEqual(index[uniquecol], 1)
 
-
-class Nest(SaveAndCheck):
-
-    'This needs to be verified with actual ScraperWiki.'
-
-    def _casting(self, thething):
-        self.save_and_check(
-            {"almonds": thething},
-            'almonds',
-            [(repr(thething),)]
-        )
-
-# class TestList(Nest):
-#  def test_list(self):
-#    self._casting(['a', 'b', 'c'])
-
-# class TestDict(Nest):
-#  def test_dict(self):
-#    self._casting({'a': 3, 5:'b', 'c': []})
-
-# class TestMultipleColumns(SaveAndSelect):
-#  def test_save(self):
-#    self.save_and_select({"firstname":"Robert","lastname":"LeTourneau"})
-
-
 class TestSave(SaveAndCheck):
-
     def test_save_int(self):
         self.save_and_check(
             {"model-number": 293}, "model-numbers", [(293,)]
@@ -276,9 +226,7 @@ class TestSave(SaveAndCheck):
             {"a": False}, "a", [(0,)]
         )
 
-
-class TestQuestionMark(TestDb):
-
+class TestQuestionMark(TestCase):
     def test_one_question_mark_with_nonlist(self):
         scraperwiki.sqlite.execute('create table zhuozi (a text);')
         scraperwiki.sqlite.execute('insert into zhuozi values (?)', 'apple')
