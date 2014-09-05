@@ -194,8 +194,8 @@ def save_var(name, value):
     _State.reflect_metadata()
 
     vars_table = sqlalchemy.Table(_State.vars_table_name, _State.metadata,
-            sqlalchemy.Column('key', sqlalchemy.types.Text, primary_key=True),
-            sqlalchemy.Column('value', sqlalchemy.types.LargeBinary),
+            sqlalchemy.Column('name', sqlalchemy.types.Text, primary_key=True),
+            sqlalchemy.Column('value_blob', sqlalchemy.types.LargeBinary),
             sqlalchemy.Column('type', sqlalchemy.types.Text),
             keep_existing=True
     )
@@ -204,7 +204,8 @@ def save_var(name, value):
 
     column_type = get_column_type(value)
 
-    vars_table.insert(prefixes=['OR REPLACE']).values(key=name, value=Blob(value),
+    vars_table.insert(prefixes=['OR REPLACE']).values(name=name,
+            value_blob=Blob(value),
             type=column_type.__visit_name__.lower()).execute()
 
 def get_var(name, default=None):
@@ -220,7 +221,7 @@ def get_var(name, default=None):
 
     table = sqlalchemy.Table(_State.vars_table_name, _State.metadata)
 
-    s = sqlalchemy.select([table.c.value, table.c.type]).where(table.c.key == name)
+    s = sqlalchemy.select([table.c.value_blob, table.c.type]).where(table.c.name == name)
     result = connection.execute(s).fetchone()
 
     if not result:
