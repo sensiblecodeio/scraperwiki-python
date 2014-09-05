@@ -229,7 +229,7 @@ def get_var(name, default=None):
 
     # This is to do the variable type conversion through the SQL engine
     connection.execute("CREATE TEMPORARY TABLE _sw_tmp ('value' {0})".format(result.type))
-    connection.execute("INSERT INTO _sw_tmp VALUES (:value)", value=result.value)
+    connection.execute("INSERT INTO _sw_tmp VALUES (:value)", value=result.value_blob)
     var = connection.execute('SELECT value FROM _sw_tmp').fetchone().value
     connection.execute("DROP TABLE _sw_tmp")
 
