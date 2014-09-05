@@ -177,14 +177,14 @@ def save(unique_keys, data, table_name=None):
         # Is a single datum
         data = [data]
     elif not isinstance(data, Iterable):
-        raise TypeError("Data must be a single mapping or an iterable \
-                         of mappings")
+        raise TypeError("Data must be a single mapping or an iterable "
+                        "of mappings")
 
     insert = _State.table.insert(prefixes=['OR REPLACE'])
     for row in data:
-        _State.check_last_committed()
         fit_row(connection, row, unique_keys)
         connection.execute(insert.values(row))
+    _State.check_last_committed()
 
 
 def set_table(table_name):
