@@ -269,7 +269,8 @@ def fit_row(connection, row, unique_keys):
     new_columns = []
     for column_name, column_value in row.items():
         new_column = sqlalchemy.Column(column_name, get_column_type(column_value))
-        if not str(new_column) in _State.table.columns:
+
+        if not str(new_column) in _State.table.columns.keys():
             new_columns.append(new_column)
             _State.table.append_column(new_column)
 
