@@ -182,6 +182,9 @@ def save(unique_keys, data, table_name=None):
 
     insert = _State.table.insert(prefixes=['OR REPLACE'])
     for row in data:
+        if not isinstance(row, Mapping):
+            raise TypeError("Elements of data must be mappings, got {}".format(
+                            type(row)))
         fit_row(connection, row, unique_keys)
         connection.execute(insert.values(row))
     _State.check_last_committed()
