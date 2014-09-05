@@ -82,6 +82,14 @@ class _State(object):
         if time.time() - cls.last_commit > SECONDS_BETWEEN_COMMIT:
             cls.new_transaction()
 
+class Transaction(object):
+    def __enter__(self):
+        _State.new_transaction()
+
+    def __exit__(self, *args):
+        _State._transaction.commit()
+        _State._transaction = None
+
 atexit.register(_State.new_transaction)
 
 def execute(query, data=None):
