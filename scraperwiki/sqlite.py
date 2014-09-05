@@ -47,11 +47,12 @@ class _State(object):
     table_pending = True
     vars_table_name = 'swvariables'
     last_commit = None
+    echo = False
     
     @classmethod
     def connection(cls):
         if cls._connection is None:
-            cls.engine = sqlalchemy.create_engine(cls.db_path, echo=False,
+            cls.engine = sqlalchemy.create_engine(cls.db_path, echo=cls.echo,
                     connect_args={'timeout': DATABASE_TIMEOUT})
             cls._connection = cls.engine.connect()
             cls.new_transaction()
