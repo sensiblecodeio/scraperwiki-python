@@ -130,7 +130,7 @@ def select(query, data=None):
 
     rows = []
     for row in result:
-        rows.append(OrderedDict(row.items()))
+        rows.append(dict(row.items()))
 
     return rows
 
