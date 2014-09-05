@@ -169,7 +169,8 @@ def set_table(table_name):
     _State.connection()
     _State.reflect_metadata()
     _State.table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
-    _State.table_pending = True
+    if _State.table.columns.keys() == []:
+        _State.table_pending = True
     _State.table_name = table_name
 
 def show_tables():
