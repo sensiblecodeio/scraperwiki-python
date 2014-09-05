@@ -114,7 +114,7 @@ class TestSaveVar(TestCase):
     def setUp(self):
         super(TestSaveVar, self).setUp()
         scraperwiki.sqlite.save_var("birthday", "November 30, 1888")
-        connection = sqlite3.connect(self.DBNAME)
+        connection = sqlite3.connect(DB_NAME)
         self.cursor = connection.cursor()
 
     def test_insert(self):
@@ -123,19 +123,17 @@ class TestSaveVar(TestCase):
         expected = [("birthday", buffer("November 30, 1888"), "text",)]
         self.assertEqual(observed, expected)
 
-
-class SaveAndCheck(TestDb):
-
+class SaveAndCheck(TestCase):
     def save_and_check(self, dataIn, tableIn, dataOut, tableOut=None, twice=True):
         if tableOut == None:
             tableOut = '[' + tableIn + ']'
 
         # Insert
-        scraperwiki.sqlite.save([], dataIn, tableIn)
-        scraperwiki.sqlite.flush()
+        with scraperwiki.sqlite.Transaction():
+            scraperwiki.sqlite.save([], dataIn, tableIn)
 
         # Observe with pysqlite
-        connection = sqlite3.connect(self.DBNAME)
+        connection = sqlite3.connect(DB_NAME)
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM %s" % tableOut)
         observed1 = cursor.fetchall()
@@ -167,7 +165,7 @@ class TestUniqueKeys(SaveAndSelect):
         self.assertEqual(observed, {u'data': [], u'keys': []})
 
     def test_two(self):
-        scraperwiki.sqlite.save(['foo', 'bar'], {"foo": 3, 'bar': 9}, u'Harpo')
+        scraperwiki.sqlite.save(['foo', 'bar'], {'foo': 3, 'bar': 9}, u'Harpo')
         observed = scraperwiki.sqlite.execute(
             u'PRAGMA index_info(Harpo_foo_bar_unique)')
 
