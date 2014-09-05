@@ -10,11 +10,15 @@ import warnings
 import alembic.ddl
 import sqlalchemy
 
-DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME", "sqlite:///scraperwiki.sqlite")
+DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME",
+                               "sqlite:///scraperwiki.sqlite")
+
 DATABASE_TIMEOUT = float(os.environ.get("SCRAPERWIKI_DATABASE_TIMEOUT", 300))
 SECONDS_BETWEEN_COMMIT = 2
 
+
 class Blob(str):
+
     """
     Represents a blob as a string.
     """
@@ -34,7 +38,9 @@ PYTHON_SQLITE_TYPE_MAP = {
     Blob: sqlalchemy.types.LargeBinary
 }
 
+
 class _State(object):
+
     """
     This class maintains global state relating to the database such as
     table_name, connection. It does not form part of the public interface.
@@ -50,12 +56,13 @@ class _State(object):
     vars_table_name = 'swvariables'
     last_commit = None
     echo = False
-    
+
     @classmethod
     def connection(cls):
         if cls._connection is None:
-            cls.engine = sqlalchemy.create_engine(cls.db_path, echo=cls.echo,
-                    connect_args={'timeout': DATABASE_TIMEOUT})
+            create = sqlalchemy.create_engine
+            cls.engine = create(cls.db_path, echo=cls.echo,
+                                connect_args={'timeout': DATABASE_TIMEOUT})
             cls._connection = cls.engine.connect()
             cls.new_transaction()
         if cls.table is None:
@@ -84,11 +91,14 @@ class _State(object):
         if time.time() - cls.last_commit > SECONDS_BETWEEN_COMMIT:
             cls.new_transaction()
 
+
 class Transaction(object):
+
     """
     This context manager must be used when other services need
     to connect to the database.
     """
+
     def __enter__(self):
         _State.connection()
         _State.new_transaction()
@@ -96,6 +106,7 @@ class Transaction(object):
     def __exit__(self, *args):
         _State._transaction.commit()
         _State._transaction = None
+
 
 @atexit.register
 def commit_transactions():
@@ -106,11 +117,13 @@ def commit_transactions():
         _State._transaction.commit()
         _State._transaction = None
 
+
 def execute(query, data=None):
     """
     Execute an arbitrary SQL query given by query, returning any
     results as a list of OrderedDicts. A list of values can be supplied as an,
-    additional argument, which will be substituted into question marks in the query.
+    additional argument, which will be substituted into question marks in the
+    query.
     """
     connection = _State.connection()
     _State.new_transaction()
@@ -124,6 +137,7 @@ def execute(query, data=None):
         return {u'data': [], u'keys': []}
 
     return {u'data': result.fetchall(), u'keys': result.keys()}
+
 
 def select(query, data=None):
     """
@@ -142,6 +156,7 @@ def select(query, data=None):
         rows.append(dict(row.items()))
 
     return rows
+
 
 def save(unique_keys, data, table_name=None):
     """
@@ -171,16 +186,20 @@ def save(unique_keys, data, table_name=None):
         fit_row(connection, row, unique_keys)
         connection.execute(insert.values(row))
 
+
 def set_table(table_name):
     """
     Specify the table to work on.
     """
     _State.connection()
     _State.reflect_metadata()
-    _State.table = sqlalchemy.Table(table_name, _State.metadata, extend_existing=True)
+    _State.table = sqlalchemy.Table(table_name, _State.metadata,
+                                    extend_existing=True)
+
     if _State.table.columns.keys() == []:
         _State.table_pending = True
     _State.table_name = table_name
+
 
 def show_tables():
     """
@@ -194,6 +213,7 @@ def show_tables():
 
     return {row['name']: row['sql'] for row in response}
 
+
 def save_var(name, value):
     """
     Save a variable to the table specified by _State.vars_table_name. Key is
@@ -202,20 +222,24 @@ def save_var(name, value):
     connection = _State.connection()
     _State.reflect_metadata()
 
-    vars_table = sqlalchemy.Table(_State.vars_table_name, _State.metadata,
-            sqlalchemy.Column('name', sqlalchemy.types.Text, primary_key=True),
-            sqlalchemy.Column('value_blob', sqlalchemy.types.LargeBinary),
-            sqlalchemy.Column('type', sqlalchemy.types.Text),
-            keep_existing=True
+    vars_table = sqlalchemy.Table(
+        _State.vars_table_name, _State.metadata,
+        sqlalchemy.Column('name', sqlalchemy.types.Text, primary_key=True),
+        sqlalchemy.Column('value_blob', sqlalchemy.types.LargeBinary),
+        sqlalchemy.Column('type', sqlalchemy.types.Text),
+        keep_existing=True
     )
 
     vars_table.create(bind=connection, checkfirst=True)
 
     column_type = get_column_type(value)
 
-    vars_table.insert(prefixes=['OR REPLACE']).values(name=name,
-            value_blob=Blob(value),
-            type=column_type.__visit_name__.lower()).execute()
+    values = dict(name=name,
+                  value_blob=Blob(value),
+                  type=column_type.__visit_name__.lower())
+
+    vars_table.insert(prefixes=['OR REPLACE']).values(**values).execute()
+
 
 def get_var(name, default=None):
     """
@@ -230,19 +254,22 @@ def get_var(name, default=None):
 
     table = sqlalchemy.Table(_State.vars_table_name, _State.metadata)
 
-    s = sqlalchemy.select([table.c.value_blob, table.c.type]).where(table.c.name == name)
+    s = sqlalchemy.select([table.c.value_blob, table.c.type])
+    s = s.where(table.c.name == name)
     result = connection.execute(s).fetchone()
 
     if not result:
         return None
 
     # This is to do the variable type conversion through the SQL engine
-    connection.execute("CREATE TEMPORARY TABLE _sw_tmp ('value' {})".format(result.type))
-    connection.execute("INSERT INTO _sw_tmp VALUES (:value)", value=result.value_blob)
-    var = connection.execute('SELECT value FROM _sw_tmp').fetchone().value
-    connection.execute("DROP TABLE _sw_tmp")
+    execute = connection.execute
+    execute("CREATE TEMPORARY TABLE _sw_tmp ('value' {})".format(result.type))
+    execute("INSERT INTO _sw_tmp VALUES (:value)", value=result.value_blob)
+    var = execute('SELECT value FROM _sw_tmp').fetchone().value
+    execute("DROP TABLE _sw_tmp")
 
     return var
+
 
 def create_index(column_names, unique=False):
     """
@@ -257,7 +284,9 @@ def create_index(column_names, unique=False):
     table = sqlalchemy.Table(table_name, _State.metadata)
 
     index_name = re.sub(r'[^a-zA-Z0-9]', '', table_name) + '_'
-    index_name += '_'.join(map(lambda x: re.sub(r'[^a-zA-Z0-9]', '', x), column_names))
+    index_name += '_'.join(re.sub(r'[^a-zA-Z0-9]', '', x)
+                           for x in column_names)
+
     if unique:
         index_name += '_unique'
 
@@ -270,6 +299,7 @@ def create_index(column_names, unique=False):
     if index.name not in current_indices:
         index.create(bind=_State.engine)
 
+
 def fit_row(connection, row, unique_keys):
     """
     Takes a row and checks to make sure it fits in the columns of the
@@ -277,7 +307,8 @@ def fit_row(connection, row, unique_keys):
     """
     new_columns = []
     for column_name, column_value in row.items():
-        new_column = sqlalchemy.Column(column_name, get_column_type(column_value))
+        new_column = sqlalchemy.Column(column_name,
+                                       get_column_type(column_value))
 
         if not str(new_column) in _State.table.columns.keys():
             new_columns.append(new_column)
@@ -290,6 +321,7 @@ def fit_row(connection, row, unique_keys):
     for new_column in new_columns:
         add_column(connection, new_column)
 
+
 def create_table(unique_keys):
     """
     Save the table currently waiting to be created.
@@ -301,6 +333,7 @@ def create_table(unique_keys):
     _State.table_pending = False
     _State.reflect_metadata()
 
+
 def add_column(connection, column):
     """
     Add a column to the current table.
@@ -309,14 +342,17 @@ def add_column(connection, column):
     connection.execute(stmt)
     _State.reflect_metadata()
 
+
 def get_column_type(column_value):
     """
     Return the appropriate SQL column type for the given value.
     """
     return PYTHON_SQLITE_TYPE_MAP[type(column_value)]
 
+
 def commit():
     warnings.warn("scraperwiki.sql.commit is now a no-op")
+
 
 def drop():
     """
