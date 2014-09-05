@@ -296,7 +296,7 @@ def add_column(connection, column_name, column_type):
     """
     Add a column to the current table.
     """
-    query = "ALTER TABLE {} ADD '{}' {}"
+    query = "ALTER TABLE '{}' ADD '{}' {}"
     query = query.format(_State.table_name, column_name, column_type)
     s = sqlalchemy.sql.text(query)
     connection.execute(s)
