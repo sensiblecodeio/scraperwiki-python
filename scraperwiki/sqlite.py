@@ -282,6 +282,7 @@ def create_table(unique_keys):
     if unique_keys != []:
         create_index(unique_keys, unique=True)
     _State.table_pending = False
+    _State.reflect_metadata()
 
 def add_column(connection, column_name, column_type):
     """
