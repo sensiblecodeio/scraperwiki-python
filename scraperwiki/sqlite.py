@@ -210,7 +210,7 @@ def get_var(name, default=None):
     _State.new_transaction()
 
     if _State.vars_table_name not in _State.metadata.tables.keys():
-        raise NameError('The variables table doesn\'t exist.')
+        return None
 
     table = sqlalchemy.Table(_State.vars_table_name, _State.metadata)
 
@@ -218,7 +218,7 @@ def get_var(name, default=None):
     result = connection.execute(s).fetchone()
 
     if not result:
-        raise NameError('The variables table doesn\'t have a value for %s.' % key)
+        return None
 
     # This is to do the variable type conversion through the SQL engine
     connection.execute("CREATE TEMPORARY TABLE _sw_tmp ('value' {0})".format(result.type))
