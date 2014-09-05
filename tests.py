@@ -208,10 +208,10 @@ class TestSave(SaveAndCheck):
 
     def test_save_twice(self):
         self.save_and_check(
-            {"modelNumber": 293}, "model-numbers", [(293,)]
+            {"modelNumber": 293}, "modelNumbers", [(293,)]
         )
         self.save_and_check(
-            {"modelNumber": 293}, "model-numbers", [(293,), (293,)], twice=False
+            {"modelNumber": 293}, "modelNumbers", [(293,), (293,)], twice=False
         )
 
     def test_save_true(self):
@@ -230,12 +230,14 @@ class TestQuestionMark(TestCase):
         scraperwiki.sqlite.execute('insert into zhuozi values (?)', 'apple')
         observed = scraperwiki.sqlite.select('* from zhuozi')
         self.assertListEqual(observed, [{'a': 'apple'}])
+        scraperwiki.sqlite.execute('drop table zhuozi')
 
     def test_one_question_mark_with_list(self):
         scraperwiki.sqlite.execute('create table zhuozi (a text);')
         scraperwiki.sqlite.execute('insert into zhuozi values (?)', ['apple'])
         observed = scraperwiki.sqlite.select('* from zhuozi')
         self.assertListEqual(observed, [{'a': 'apple'}])
+        scraperwiki.sqlite.execute('drop table zhuozi')
 
     def test_multiple_question_marks(self):
         scraperwiki.sqlite.execute('create table zhuozi (a text, b text);')
