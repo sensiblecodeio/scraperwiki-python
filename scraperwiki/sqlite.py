@@ -97,7 +97,14 @@ class Transaction(object):
         _State._transaction.commit()
         _State._transaction = None
 
-atexit.register(_State.new_transaction)
+@atexit.register
+def commit_transactions():
+    """
+    Ensure any outstanding transactions are committed on exit
+    """
+    if _State._transaction is not None:
+        _State._transaction.commit()
+        _State._transaction = None
 
 def execute(query, data=None):
     """
