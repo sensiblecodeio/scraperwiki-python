@@ -245,43 +245,46 @@ class TestQuestionMark(TestCase):
             'insert into zhuozi values (?, ?)', ['apple', 'banana'])
         observed = scraperwiki.sqlite.select('* from zhuozi')
         self.assertListEqual(observed, [{'a': 'apple', 'b': 'banana'}])
+        scraperwiki.sqlite.execute('drop table zhuozi')
 
 
-class TestDateTime(TestDb):
-
+class TestDateTime(TestCase):
     def rawdate(self, table="swdata", column="datetime"):
-        connection = sqlite3.connect(self.DBNAME)
+        connection = sqlite3.connect(DB_NAME)
         cursor = connection.cursor()
-        cursor.execute("SELECT %s FROM %s LIMIT 1" % (column, table))
+        cursor.execute("select {} from {}".format(column, table))
         rawdate = cursor.fetchall()[0][0]
         connection.close()
         return rawdate
 
     def test_save_date(self):
         d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d').date()
-        scraperwiki.sqlite.save([], {"birthday": d})
-        scraperwiki.sqlite.flush()
+        with scraperwiki.sql.Transaction():
+            scraperwiki.sqlite.save([], {"birthday": d})
+
+            self.assertEqual(
+                [{u'birthday': str(d)}], scraperwiki.sqlite.select("* from swdata"))
+
+            self.assertEqual(
+                {u'keys': [u'birthday'], u'data': [(unicode(d),)]},
+                scraperwiki.sqlite.execute("select * from swdata"))
 
         self.assertEqual(str(d), self.rawdate(column="birthday"))
-        self.assertEqual(
-            [{u'birthday': str(d)}], scraperwiki.sqlite.select("* from swdata"))
-        self.assertEqual(
-            {u'keys': [u'birthday'], u'data': ([str(d)])}, scraperwiki.sqlite.execute("select * from swdata"))
 
     def test_save_datetime(self):
         d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d')
-        scraperwiki.sqlite.save([], {"birthday": d})
-        scraperwiki.sqlite.flush()
+        with scraperwiki.sql.Transaction():
+            scraperwiki.sqlite.set_table('datetimetest')
+            scraperwiki.sqlite.save([], {"birthday": d})
+
+            self.assertEqual(
+                [{u'birthday': str(d)}], scraperwiki.sqlite.select("* from datetimetest"))
+            self.assertEqual(
+                {u'keys': [u'birthday'], u'data': ([str(d)])}, scraperwiki.sqlite.execute("select * from swdata"))
 
         self.assertEqual(str(d), self.rawdate(column="birthday"))
-        self.assertEqual(
-            [{u'birthday': str(d)}], scraperwiki.sqlite.select("* from swdata"))
-        self.assertEqual(
-            {u'keys': [u'birthday'], u'data': ([str(d)])}, scraperwiki.sqlite.execute("select * from swdata"))
-
 
 class TestStatus(TestCase):
-
     'Test that the status endpoint works.'
 
     def test_does_nothing_if_called_outside_box(self):
