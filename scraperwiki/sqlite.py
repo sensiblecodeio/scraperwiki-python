@@ -60,6 +60,8 @@ class _State(object):
             cls.reflect_metadata()
             cls.table = sqlalchemy.Table(cls.table_name, _State.metadata,
                                          extend_existing=True)
+        if cls._transaction is None:
+            cls.new_transaction()
         return cls._connection
 
     @classmethod
