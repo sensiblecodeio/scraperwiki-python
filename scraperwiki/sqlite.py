@@ -50,19 +50,27 @@ class _Buffer(object):
     flush_deadline = time.time() + MAX_SECONDS_BEFORE_FLUSH
 
     @classmethod
-    def flush(cls):
+    def flush(cls, reset=True):
+        """
+        reset: set unique_keys and buffered_table back to their unset state.
+        """
         if cls.flushing:
             raise RuntimeError("Double flush")
 
         if not cls.buffered_saves:
             return
 
+        assert cls.buffered_table is not None
+        assert cls.unique_keys is not None
+
         cls.flushing = True
 
         real_save(cls.unique_keys, cls.buffered_saves, cls.buffered_table)
 
-        cls.unique_keys = None
-        cls.buffered_table = None
+        if reset:
+            cls.unique_keys = None
+            cls.buffered_table = None
+
         # In place list update to preserve other references to this list.
         cls.buffered_saves[:] = []
 
@@ -74,8 +82,12 @@ class _Buffer(object):
 
     @classmethod
     def append(cls, unique_keys, data, table_name):
+        assert table_name is not None
+        assert unique_keys is not None
+
         if cls.unique_keys != unique_keys or cls.buffered_table != table_name:
             cls.flush()
+
         cls.unique_keys = unique_keys
         cls.buffered_table = table_name
 
@@ -95,7 +107,8 @@ class _Buffer(object):
                     raise TypeError(cls.BAD_TYPE, type(datum))
                 append(datum)
                 if len(buffered_saves) >= MAX_SIZE:
-                    cls.flush()
+                    # "False": don't reset unique_keys/buffered_table
+                    cls.flush(False)
         else:
             # Not mapping or iterable of mapping
             raise TypeError(cls.BAD_TYPE, type(data))
