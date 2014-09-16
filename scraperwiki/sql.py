@@ -169,7 +169,7 @@ def save(unique_keys, data, table_name=None):
                          call scraperwiki.sql.set_table instead''')
         set_table(table_name)
     else:
-        table_name = _State.table_name
+        set_table('swdata')
 
     connection = _State.connection()
 

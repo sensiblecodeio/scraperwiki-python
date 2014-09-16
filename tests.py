@@ -167,8 +167,7 @@ class SaveAndSelect(TestCase):
 
 class TestUniqueKeys(SaveAndSelect):
     def test_empty(self):
-        scraperwiki.sql.set_table(u'Chico')
-        scraperwiki.sql.save([], {"foo": 3})
+        scraperwiki.sql.save([], {"foo": 3}, table_name="Chico")
         observed = scraperwiki.sql.execute(u'PRAGMA index_list(Chico)')
         self.assertEqual(observed, {u'data': [], u'keys': []})
 
@@ -232,6 +231,20 @@ class TestSave(SaveAndCheck):
             {"a": False}, "false", [(0,)]
         )
 
+    def test_save_table_name(self):
+        """
+        Test that after we use table_name= in one .save() a
+        subsequence .save without table_name= uses the `swdata`
+        table again.
+        """
+        scraperwiki.sql.save(['id'], dict(id=1, stuff=1),
+          table_name='sticky')
+        scraperwiki.sql.save(['id'], dict(id=2, stuff=2))
+        results = scraperwiki.sql.select('* from sticky')
+        self.assertEqual(1, len(results))
+        (row, ) = results
+        self.assertDictEqual(dict(id=1, stuff=1), row)
+
 class TestQuestionMark(TestCase):
     def test_one_question_mark_with_nonlist(self):
         scraperwiki.sql.execute('create table zhuozi (a text);')
@@ -282,8 +295,8 @@ class TestDateTime(TestCase):
     def test_save_datetime(self):
         d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d')
         with scraperwiki.sql.Transaction():
-            scraperwiki.sql.set_table('datetimetest')
-            scraperwiki.sql.save([], {"birthday": d})
+            scraperwiki.sql.save([], {"birthday": d},
+              table_name="datetimetest")
 
             exemplar = unicode(d)
             # SQLAlchemy appears to convert with extended precision.
