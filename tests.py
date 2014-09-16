@@ -1,14 +1,16 @@
 #!/usr/bin/env python
-from unittest import TestCase, main
-from json import loads, dumps
+
+import datetime
+import os
+import re
+import shutil
+import sqlite3
+import urllib2
+
 from subprocess import Popen, PIPE
 from textwrap import dedent
-import sqlite3
-import os
-import shutil
-import datetime
-import urllib2
-import re
+
+from unittest import TestCase, main
 
 import scraperwiki
 
