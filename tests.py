@@ -6,6 +6,7 @@ import re
 import shutil
 import sqlite3
 import urllib2
+import warnings
 
 from subprocess import Popen, PIPE
 from textwrap import dedent
@@ -81,6 +82,15 @@ class TestException(TestCase):
         # Check that the time is relatively recent.
         then = datetime.datetime.strptime(l[0]['time'], '%Y-%m-%d %H:%M:%S.%f')
         assert (datetime.datetime.now() - then).total_seconds() < 5 * 60
+
+# called TestAAAWarning so that it gets run first by nosetests,
+# which we need, otherwise the warning has already happened.
+class TestAAAWarning(TestCase):
+    def test_save_no_warn(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            scraperwiki.sql.save(['id'], dict(id=4, tumble='weed'),
+              table_name="warning_test")
 
 class TestSaveGetVar(TestCase):
     def savegetvar(self, var):
