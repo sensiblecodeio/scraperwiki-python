@@ -148,7 +148,7 @@ class SaveAndCheck(TestCase):
         connection.close()
 
         if twice:
-            # Observe with DumpTruck
+            # Observe using this module
             observed2 = scraperwiki.sql.select('* FROM %s' % tableOut)
 
             # Check
