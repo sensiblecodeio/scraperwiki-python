@@ -158,18 +158,15 @@ def select(query, data=None):
     return rows
 
 
-def save(unique_keys, data, table_name=None):
+def save(unique_keys, data, table_name='swdata'):
     """
-    Save the given data to the current table. The data must be a mapping
+    Save the given data to the table specified by `table_name`
+    (which defaults to 'swdata'). The data must be a mapping
     or an iterable of mappings. Unique keys is a list of keys that exist
     for all rows and for which a unique index will be created.
     """
-    if table_name is not None:
-        warnings.warn('''scraperwiki.sql.save table_name is deprecated,
-                         call scraperwiki.sql.set_table instead''')
-        _set_table(table_name)
-    else:
-        _set_table('swdata')
+
+    _set_table(table_name)
 
     connection = _State.connection()
 
