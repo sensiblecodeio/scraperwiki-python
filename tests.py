@@ -279,8 +279,13 @@ class TestDateTime(TestCase):
             scraperwiki.sql.set_table('datetimetest')
             scraperwiki.sql.save([], {"birthday": d})
 
+            exemplar = unicode(d)
+            # SQLAlchemy appears to convert with extended precision.
+            exemplar += ".000000"
+
             self.assertEqual(
-                [{u'birthday': unicode(d)}], scraperwiki.sql.select("* from datetimetest"))
+                [{u'birthday': exemplar}],
+                scraperwiki.sql.select("* from datetimetest"))
             self.assertEqual(
                 {u'keys': [u'birthday'], u'data': ([str(d)])}, scraperwiki.sql.execute("select * from swdata"))
 
