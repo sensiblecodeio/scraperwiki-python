@@ -292,10 +292,11 @@ class TestDateTime(TestCase):
             self.assertEqual(
                 [{u'birthday': exemplar}],
                 scraperwiki.sql.select("* from datetimetest"))
-            self.assertEqual(
-                {u'keys': [u'birthday'], u'data': ([str(d)])}, scraperwiki.sql.execute("select * from swdata"))
+            self.assertDictEqual(
+                {u'keys': [u'birthday'], u'data': [(exemplar,)]},
+                scraperwiki.sql.execute("select * from datetimetest"))
 
-        self.assertEqual(str(d), self.rawdate(column="birthday"))
+        self.assertEqual(exemplar, self.rawdate(table="datetimetest", column="birthday"))
 
 class TestStatus(TestCase):
     'Test that the status endpoint works.'
