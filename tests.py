@@ -224,12 +224,12 @@ class TestSave(SaveAndCheck):
 
     def test_save_true(self):
         self.save_and_check(
-            {"a": True}, "a", [(1,)]
+            {"a": True}, "true", [(1,)]
         )
 
-    def test_save_true(self):
+    def test_save_false(self):
         self.save_and_check(
-            {"a": False}, "a", [(0,)]
+            {"a": False}, "false", [(0,)]
         )
 
 class TestQuestionMark(TestCase):
