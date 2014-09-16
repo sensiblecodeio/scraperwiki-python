@@ -120,11 +120,15 @@ class TestSaveVar(TestCase):
         self.cursor = connection.cursor()
 
     def test_insert(self):
-        self.cursor.execute("SELECT name, value_blob, type FROM `swvariables`")
+        self.cursor.execute("""
+          SELECT name, value_blob, type
+          FROM `swvariables`
+          WHERE name == "birthday"
+          """)
         observed = self.cursor.fetchall()
         expected = [("birthday", "November 30, 1888", "text",)]
         ((a, b, c),) = observed
-        observed = [a, str(b), c]
+        observed = [(a, str(b), c)]
         self.assertEqual(observed, expected)
 
 class SaveAndCheck(TestCase):
