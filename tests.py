@@ -266,7 +266,7 @@ class TestDateTime(TestCase):
         return rawdate
 
     def test_save_date(self):
-        d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d').date()
+        d = datetime.datetime.strptime('1991-03-30', '%Y-%m-%d').date()
         with scraperwiki.sql.Transaction():
             scraperwiki.sql.save([], {"birthday": d})
 
