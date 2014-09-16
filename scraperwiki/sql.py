@@ -167,9 +167,9 @@ def save(unique_keys, data, table_name=None):
     if table_name is not None:
         warnings.warn('''scraperwiki.sql.save table_name is deprecated,
                          call scraperwiki.sql.set_table instead''')
-        set_table(table_name)
+        _set_table(table_name)
     else:
-        set_table('swdata')
+        _set_table('swdata')
 
     connection = _State.connection()
 
@@ -190,7 +190,7 @@ def save(unique_keys, data, table_name=None):
     _State.check_last_committed()
 
 
-def set_table(table_name):
+def _set_table(table_name):
     """
     Specify the table to work on.
     """
