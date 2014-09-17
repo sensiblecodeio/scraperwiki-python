@@ -8,6 +8,7 @@ https://scraperwiki.com/docs/python/python_help_documentation/
 
 from .utils import scrape, pdftoxml, status
 import utils
-import sqlite
+import sql
 
-sql = sqlite
+# Compatibility
+sqlite = sql

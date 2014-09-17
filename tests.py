@@ -1,40 +1,33 @@
 #!/usr/bin/env python
-from unittest import TestCase, main
-from json import loads, dumps
+
+import datetime
+import os
+import re
+import shutil
+import sqlite3
+import urllib2
+import warnings
+
 from subprocess import Popen, PIPE
 from textwrap import dedent
-import sqlite3
-import os
-import shutil
-import datetime
-import urllib2
-import re
 
-# This library
+from unittest import TestCase, main
+
 import scraperwiki
 
+# scraperwiki.sql._State.echo = True
 
-class TestDb(TestCase):
-    DBNAME = 'scraperwiki.sqlite'
+DB_NAME = 'scraperwiki.sqlite'
 
-    def setUp(self):
-        self.cleanUp()
-        scraperwiki.sqlite._connect(self.DBNAME)
-
-    def tearDown(self):
-        self.cleanUp()
-
-    def cleanUp(self):
-        "Clean up temporary files, then reinitialize."
-        if self.DBNAME != ':memory:':
-            try:
-                os.remove(self.DBNAME)
-            except OSError:
-                pass
+class Setup(TestCase):
+    def test_setup(self):
+        try:
+            os.remove('scraperwiki.sqlite')
+        except OSError:
+            pass
 
 
-class TestException(TestDb):
-
+class TestException(TestCase):
     def testExceptionSaved(self):
         script = dedent("""
             import scraperwiki.runlog
@@ -49,7 +42,7 @@ class TestException(TestDb):
         match = re.match(r'^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', stdout)
         assert match, "runlog.setup() should return a run_id"
 
-        l = scraperwiki.sqlite.select(
+        l = scraperwiki.sql.select(
             "exception_type, run_id, time from _sw_runlog order by time desc limit 1")
 
         # Check that some record is stored.
@@ -75,7 +68,7 @@ class TestException(TestDb):
                         stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
         stdout, stderr = process.communicate()
 
-        l = scraperwiki.sqlite.select(
+        l = scraperwiki.sql.select(
             "time, run_id, success from _sw_runlog order by time desc limit 1")
 
         # Check that some record is stored.
@@ -90,12 +83,19 @@ class TestException(TestDb):
         then = datetime.datetime.strptime(l[0]['time'], '%Y-%m-%d %H:%M:%S.%f')
         assert (datetime.datetime.now() - then).total_seconds() < 5 * 60
 
+# called TestAAAWarning so that it gets run first by nosetests,
+# which we need, otherwise the warning has already happened.
+class TestAAAWarning(TestCase):
+    def test_save_no_warn(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            scraperwiki.sql.save(['id'], dict(id=4, tumble='weed'),
+              table_name="warning_test")
 
-class TestSaveGetVar(TestDb):
-
+class TestSaveGetVar(TestCase):
     def savegetvar(self, var):
-        scraperwiki.sqlite.save_var("weird", var)
-        self.assertEqual(scraperwiki.sqlite.get_var("weird"), var)
+        scraperwiki.sql.save_var("weird", var)
+        self.assertEqual(scraperwiki.sql.get_var("weird"), var)
 
     def test_string(self):
         self.savegetvar("asdio")
@@ -103,69 +103,63 @@ class TestSaveGetVar(TestDb):
     def test_int(self):
         self.savegetvar(1)
 
-    # def test_list(self):
-    #  self.savegetvar([1,2,3,4])
-
-    # def test_dict(self):
-    #  self.savegetvar({"abc":"def"})
-
     def test_date(self):
         date1 = datetime.datetime.now()
         date2 = datetime.date.today()
-        scraperwiki.sqlite.save_var("weird", date1)
-        self.assertEqual(scraperwiki.sqlite.get_var("weird"), unicode(date1))
-        scraperwiki.sqlite.save_var("weird", date2)
-        self.assertEqual(scraperwiki.sqlite.get_var("weird"), unicode(date2))
+        scraperwiki.sql.save_var("weird", date1)
+        self.assertEqual(scraperwiki.sql.get_var("weird"), unicode(date1))
+        scraperwiki.sql.save_var("weird", date2)
+        self.assertEqual(scraperwiki.sql.get_var("weird"), unicode(date2))
 
     def test_save_multiple_values(self):
-        scraperwiki.sqlite.save_var('foo', 'hello')
-        scraperwiki.sqlite.save_var('bar', 'goodbye')
+        scraperwiki.sql.save_var('foo', 'hello')
+        scraperwiki.sql.save_var('bar', 'goodbye')
 
-        self.assertEqual('hello', scraperwiki.sqlite.get_var('foo'))
-        self.assertEqual('goodbye', scraperwiki.sqlite.get_var('bar'))
+        self.assertEqual('hello', scraperwiki.sql.get_var('foo'))
+        self.assertEqual('goodbye', scraperwiki.sql.get_var('bar'))
 
-
-class TestGetNonexistantVar(TestDb):
-
+class TestGetNonexistantVar(TestCase):
     def test_get(self):
-        self.assertIsNone(scraperwiki.sqlite.get_var('meatball'))
+        self.assertIsNone(scraperwiki.sql.get_var('meatball'))
 
-
-class TestSaveVar(TestDb):
-
+class TestSaveVar(TestCase):
     def setUp(self):
         super(TestSaveVar, self).setUp()
-        scraperwiki.sqlite.save_var("birthday", "November 30, 1888")
-        connection = sqlite3.connect(self.DBNAME)
+        scraperwiki.sql.save_var("birthday", "November 30, 1888")
+        connection = sqlite3.connect(DB_NAME)
         self.cursor = connection.cursor()
 
     def test_insert(self):
-        self.cursor.execute("SELECT name, value_blob, type FROM `swvariables`")
+        self.cursor.execute("""
+          SELECT name, value_blob, type
+          FROM `swvariables`
+          WHERE name == "birthday"
+          """)
         observed = self.cursor.fetchall()
         expected = [("birthday", "November 30, 1888", "text",)]
+        ((a, b, c),) = observed
+        observed = [(a, str(b), c)]
         self.assertEqual(observed, expected)
 
-
-class SaveAndCheck(TestDb):
-
+class SaveAndCheck(TestCase):
     def save_and_check(self, dataIn, tableIn, dataOut, tableOut=None, twice=True):
         if tableOut == None:
             tableOut = '[' + tableIn + ']'
 
         # Insert
-        scraperwiki.sqlite.save([], dataIn, tableIn)
-        scraperwiki.sqlite.flush()
+        with scraperwiki.sql.Transaction():
+            scraperwiki.sql.save([], dataIn, tableIn)
 
         # Observe with pysqlite
-        connection = sqlite3.connect(self.DBNAME)
+        connection = sqlite3.connect(DB_NAME)
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM %s" % tableOut)
         observed1 = cursor.fetchall()
         connection.close()
 
         if twice:
-            # Observe with DumpTruck
-            observed2 = scraperwiki.sqlite.select('* FROM %s' % tableOut)
+            # Observe using this module
+            observed2 = scraperwiki.sql.select('* FROM %s' % tableOut)
 
             # Check
             expected1 = dataOut
@@ -174,46 +168,42 @@ class SaveAndCheck(TestDb):
             self.assertListEqual(observed1, expected1)
             self.assertListEqual(observed2, expected2)
 
-
-class SaveAndSelect(TestDb):
-
+class SaveAndSelect(TestCase):
     def save_and_select(self, d):
-        scraperwiki.sqlite.save([], {"foo": d})
-
-        observed = scraperwiki.sqlite.select('* from swdata')[0]['foo']
+        scraperwiki.sql.save([], {"foo": d})
+        observed = scraperwiki.sql.select('* from swdata')[0]['foo']
         self.assertEqual(d, observed)
 
 
 class TestUniqueKeys(SaveAndSelect):
-
     def test_empty(self):
-        scraperwiki.sqlite.save([], {"foo": 3}, u'Chico')
-        observed = scraperwiki.sqlite.execute(u'PRAGMA index_list(Chico)')
+        scraperwiki.sql.save([], {"foo": 3}, table_name="Chico")
+        observed = scraperwiki.sql.execute(u'PRAGMA index_list(Chico)')
         self.assertEqual(observed, {u'data': [], u'keys': []})
 
     def test_two(self):
-        scraperwiki.sqlite.save(['foo', 'bar'], {"foo": 3, 'bar': 9}, u'Harpo')
-        observed = scraperwiki.sqlite.execute(
-            u'PRAGMA index_info(Harpo_foo_bar)')
+        scraperwiki.sql.save(['foo', 'bar'], {'foo': 3, 'bar': 9}, u'Harpo')
+        observed = scraperwiki.sql.execute(
+            u'PRAGMA index_info(Harpo_foo_bar_unique)')
 
         # Indexness
         self.assertIsNotNone(observed)
 
         # Indexed columns
         expected = {
-            'keys': [u'seqno', u'cid', u'name'],
-            'data': [
-                [0, 0, u'foo'],
-                [1, 1, u'bar'],
+            u'keys': [u'seqno', u'cid', u'name'],
+            u'data': [
+                (0, 0, u'foo'),
+                (1, 1, u'bar'),
             ]
         }
         self.assertDictEqual(observed, expected)
 
         # Uniqueness
-        indices = scraperwiki.sqlite.execute('PRAGMA index_list(Harpo)')
+        indices = scraperwiki.sql.execute('PRAGMA index_list(Harpo)')
         namecol = indices[u"keys"].index(u'name')
         for index in indices[u"data"]:
-            if index[namecol] == u'Harpo_foo_bar':
+            if index[namecol] == u'Harpo_foo_bar_unique':
                 break
         else:
             index = {}
@@ -221,33 +211,7 @@ class TestUniqueKeys(SaveAndSelect):
         uniquecol = indices[u"keys"].index(u'unique')
         self.assertEqual(index[uniquecol], 1)
 
-
-class Nest(SaveAndCheck):
-
-    'This needs to be verified with actual ScraperWiki.'
-
-    def _casting(self, thething):
-        self.save_and_check(
-            {"almonds": thething},
-            'almonds',
-            [(repr(thething),)]
-        )
-
-# class TestList(Nest):
-#  def test_list(self):
-#    self._casting(['a', 'b', 'c'])
-
-# class TestDict(Nest):
-#  def test_dict(self):
-#    self._casting({'a': 3, 5:'b', 'c': []})
-
-# class TestMultipleColumns(SaveAndSelect):
-#  def test_save(self):
-#    self.save_and_select({"firstname":"Robert","lastname":"LeTourneau"})
-
-
 class TestSave(SaveAndCheck):
-
     def test_save_int(self):
         self.save_and_check(
             {"model-number": 293}, "model-numbers", [(293,)]
@@ -261,80 +225,103 @@ class TestSave(SaveAndCheck):
 
     def test_save_twice(self):
         self.save_and_check(
-            {"modelNumber": 293}, "model-numbers", [(293,)]
+            {"modelNumber": 293}, "modelNumbers", [(293,)]
         )
         self.save_and_check(
-            {"modelNumber": 293}, "model-numbers", [(293,), (293,)], twice=False
+            {"modelNumber": 293}, "modelNumbers", [(293,), (293,)], twice=False
         )
 
     def test_save_true(self):
         self.save_and_check(
-            {"a": True}, "a", [(1,)]
+            {"a": True}, "true", [(1,)]
         )
 
-    def test_save_true(self):
+    def test_save_false(self):
         self.save_and_check(
-            {"a": False}, "a", [(0,)]
+            {"a": False}, "false", [(0,)]
         )
 
+    def test_save_table_name(self):
+        """
+        Test that after we use table_name= in one .save() a
+        subsequence .save without table_name= uses the `swdata`
+        table again.
+        """
+        scraperwiki.sql.save(['id'], dict(id=1, stuff=1),
+          table_name='sticky')
+        scraperwiki.sql.save(['id'], dict(id=2, stuff=2))
+        results = scraperwiki.sql.select('* from sticky')
+        self.assertEqual(1, len(results))
+        (row, ) = results
+        self.assertDictEqual(dict(id=1, stuff=1), row)
 
-class TestQuestionMark(TestDb):
-
+class TestQuestionMark(TestCase):
     def test_one_question_mark_with_nonlist(self):
-        scraperwiki.sqlite.execute('create table zhuozi (a text);')
-        scraperwiki.sqlite.execute('insert into zhuozi values (?)', 'apple')
-        observed = scraperwiki.sqlite.select('* from zhuozi')
+        scraperwiki.sql.execute('create table zhuozi (a text);')
+        scraperwiki.sql.execute('insert into zhuozi values (?)', 'apple')
+        observed = scraperwiki.sql.select('* from zhuozi')
         self.assertListEqual(observed, [{'a': 'apple'}])
+        scraperwiki.sql.execute('drop table zhuozi')
 
     def test_one_question_mark_with_list(self):
-        scraperwiki.sqlite.execute('create table zhuozi (a text);')
-        scraperwiki.sqlite.execute('insert into zhuozi values (?)', ['apple'])
-        observed = scraperwiki.sqlite.select('* from zhuozi')
+        scraperwiki.sql.execute('create table zhuozi (a text);')
+        scraperwiki.sql.execute('insert into zhuozi values (?)', ['apple'])
+        observed = scraperwiki.sql.select('* from zhuozi')
         self.assertListEqual(observed, [{'a': 'apple'}])
+        scraperwiki.sql.execute('drop table zhuozi')
 
     def test_multiple_question_marks(self):
-        scraperwiki.sqlite.execute('create table zhuozi (a text, b text);')
-        scraperwiki.sqlite.execute(
+        scraperwiki.sql.execute('create table zhuozi (a text, b text);')
+        scraperwiki.sql.execute(
             'insert into zhuozi values (?, ?)', ['apple', 'banana'])
-        observed = scraperwiki.sqlite.select('* from zhuozi')
+        observed = scraperwiki.sql.select('* from zhuozi')
         self.assertListEqual(observed, [{'a': 'apple', 'b': 'banana'}])
+        scraperwiki.sql.execute('drop table zhuozi')
 
 
-class TestDateTime(TestDb):
-
+class TestDateTime(TestCase):
     def rawdate(self, table="swdata", column="datetime"):
-        connection = sqlite3.connect(self.DBNAME)
+        connection = sqlite3.connect(DB_NAME)
         cursor = connection.cursor()
-        cursor.execute("SELECT %s FROM %s LIMIT 1" % (column, table))
+        cursor.execute("select {} from {}".format(column, table))
         rawdate = cursor.fetchall()[0][0]
         connection.close()
         return rawdate
 
     def test_save_date(self):
-        d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d').date()
-        scraperwiki.sqlite.save([], {"birthday": d})
-        scraperwiki.sqlite.flush()
+        d = datetime.datetime.strptime('1991-03-30', '%Y-%m-%d').date()
+        with scraperwiki.sql.Transaction():
+            scraperwiki.sql.save([], {"birthday": d})
+
+            self.assertEqual(
+                [{u'birthday': str(d)}], scraperwiki.sql.select("* from swdata"))
+
+            self.assertEqual(
+                {u'keys': [u'birthday'], u'data': [(unicode(d),)]},
+                scraperwiki.sql.execute("select * from swdata"))
 
         self.assertEqual(str(d), self.rawdate(column="birthday"))
-        self.assertEqual(
-            [{u'birthday': str(d)}], scraperwiki.sqlite.select("* from swdata"))
-        self.assertEqual(
-            {u'keys': [u'birthday'], u'data': [[str(d)]]}, scraperwiki.sqlite.execute("select * from swdata"))
 
     def test_save_datetime(self):
         d = datetime.datetime.strptime('1990-03-30', '%Y-%m-%d')
-        scraperwiki.sqlite.save([], {"birthday": d})
-        scraperwiki.sqlite.flush()
+        with scraperwiki.sql.Transaction():
+            scraperwiki.sql.save([], {"birthday": d},
+              table_name="datetimetest")
 
-        self.assertEqual(str(d), self.rawdate(column="birthday"))
-        self.assertEqual(
-            [{u'birthday': str(d)}], scraperwiki.sqlite.select("* from swdata"))
-        self.assertEqual(
-            {u'keys': [u'birthday'], u'data': [[str(d)]]}, scraperwiki.sqlite.execute("select * from swdata"))
+            exemplar = unicode(d)
+            # SQLAlchemy appears to convert with extended precision.
+            exemplar += ".000000"
 
+            self.assertEqual(
+                [{u'birthday': exemplar}],
+                scraperwiki.sql.select("* from datetimetest"))
+            self.assertDictEqual(
+                {u'keys': [u'birthday'], u'data': [(exemplar,)]},
+                scraperwiki.sql.execute("select * from datetimetest"))
+
+        self.assertEqual(exemplar, self.rawdate(table="datetimetest", column="birthday"))
 
 class TestStatus(TestCase):
-
     'Test that the status endpoint works.'
 
     def test_does_nothing_if_called_outside_box(self):
