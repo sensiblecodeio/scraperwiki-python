@@ -43,7 +43,7 @@ class _State(object):
 
     """
     This class maintains global state relating to the database such as
-    table_name, connection. It does not form part of the public interface.
+    connection. It does not form part of the public interface.
     """
     db_path = DATABASE_NAME
     engine = None
@@ -51,7 +51,6 @@ class _State(object):
     _transaction = None
     metadata = None
     table = None
-    table_name = 'swdata'
     table_pending = True
     vars_table_name = 'swvariables'
     last_commit = None
@@ -67,7 +66,7 @@ class _State(object):
             cls.new_transaction()
         if cls.table is None:
             cls.reflect_metadata()
-            cls.table = sqlalchemy.Table(cls.table_name, _State.metadata,
+            cls.table = sqlalchemy.Table('swdata', _State.metadata,
                                          extend_existing=True)
         if cls._transaction is None:
             cls.new_transaction()
@@ -198,7 +197,6 @@ def _set_table(table_name):
 
     if _State.table.columns.keys() == []:
         _State.table_pending = True
-    _State.table_name = table_name
 
 
 def show_tables():
@@ -279,9 +277,9 @@ def create_index(column_names, unique=False):
     """
     connection = _State.connection()
     _State.reflect_metadata()
-    table_name = _State.table_name
+    table_name = _State.table.name
 
-    table = sqlalchemy.Table(table_name, _State.metadata)
+    table = _State.table
 
     index_name = re.sub(r'[^a-zA-Z0-9]', '', table_name) + '_'
     index_name += '_'.join(re.sub(r'[^a-zA-Z0-9]', '', x)
@@ -338,7 +336,7 @@ def add_column(connection, column):
     """
     Add a column to the current table.
     """
-    stmt = alembic.ddl.base.AddColumn(_State.table_name, column)
+    stmt = alembic.ddl.base.AddColumn(_State.table.name, column)
     connection.execute(stmt)
     _State.reflect_metadata()
 
