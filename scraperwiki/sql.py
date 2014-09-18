@@ -51,7 +51,10 @@ class _State(object):
     _transaction = None
     metadata = None
     table = None
-    table_pending = True
+    # Whether or not we need to create the table. It's set by
+    # _set_table(); it's left unassigned here to catch
+    # accidental uses of it.
+    # table_pending = None
     vars_table_name = 'swvariables'
     last_commit = None
     echo = False
@@ -197,6 +200,8 @@ def _set_table(table_name):
 
     if _State.table.columns.keys() == []:
         _State.table_pending = True
+    else:
+        _State.table_pending = False
 
 
 def show_tables():
