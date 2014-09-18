@@ -244,7 +244,7 @@ class TestSave(SaveAndCheck):
     def test_save_table_name(self):
         """
         Test that after we use table_name= in one .save() a
-        subsequence .save without table_name= uses the `swdata`
+        subsequent .save without table_name= uses the `swdata`
         table again.
         """
         scraperwiki.sql.save(['id'], dict(id=1, stuff=1),
