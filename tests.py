@@ -211,6 +211,33 @@ class TestUniqueKeys(SaveAndSelect):
         uniquecol = indices[u"keys"].index(u'unique')
         self.assertEqual(index[uniquecol], 1)
 
+class TestSaveColumn(TestCase):
+    def test_add_column(self):
+        # Indicative for
+        # https://github.com/scraperwiki/scraperwiki-python/issues/64
+
+        # The bug is that in the first .save() of a process, a
+        # new column cannot be added if the table already exists.
+        # Because it's only the first .save() of a process, we
+        # need to run a subprocess.
+        connection = sqlite3.connect(DB_NAME)
+        cursor = connection.cursor()
+        cursor.execute('create table frigled (a text);')
+        cursor.execute('insert into frigled values ("boo")')
+        connection.close()
+
+        script = dedent("""
+          import scraperwiki
+          scraperwiki.sql.save(['id'], dict(id=1, a="bar", b="foo"))
+          """)
+        process = Popen(["python", "-c", script],
+                        stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
+        stdout, stderr = process.communicate()
+        assert process.returncode == 0
+        self.assertEqual(stdout, "")
+        self.assertEqual(stderr, "")
+
+
 class TestSave(SaveAndCheck):
     def test_save_int(self):
         self.save_and_check(
