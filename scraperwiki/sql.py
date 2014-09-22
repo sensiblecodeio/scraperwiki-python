@@ -35,7 +35,7 @@ PYTHON_SQLITE_TYPE_MAP = {
     datetime.date: sqlalchemy.types.Date,
     datetime.datetime: sqlalchemy.types.DateTime,
 
-    Blob: sqlalchemy.types.LargeBinary
+    Blob: sqlalchemy.types.LargeBinary,
 }
 
 
