@@ -36,13 +36,13 @@ config = dict(name='scraperwiki',
               'Topic :: Database :: Front-Ends',
               ],
               packages=['scraperwiki', 'scraperwiki.runlog'],
-              version='0.3.11',
+              version='0.4.0',
               license='GPL',
               )
 
 try:
     from setuptools import setup
-    config['install_requires'] = ['dumptruck>=0.1.6', 'requests',
+    config['install_requires'] = ['requests',
                                   'sqlalchemy', 'alembic'],
 except ImportError:
     pass
