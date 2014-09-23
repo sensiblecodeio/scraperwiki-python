@@ -282,6 +282,23 @@ class TestSave(SaveAndCheck):
         (row, ) = results
         self.assertDictEqual(dict(id=1, stuff=1), row)
 
+    def test_lxml_string(self):
+        """Save lxml string."""
+
+        import lxml.html
+
+        # See https://github.com/scraperwiki/scraperwiki-python/issues/65
+
+        # Careful, this looks like a string (eg, when printed or
+        # repr()d), but is actually an instance of some class
+        # internal to lxml.
+        s = lxml.html.fromstring('<b>Hello</b>').xpath('//b')[0].text_content()
+        self.save_and_check(
+            {"text": s},
+            "lxml",
+            [(unicode(s),)]
+        )
+
 class TestQuestionMark(TestCase):
     def test_one_question_mark_with_nonlist(self):
         scraperwiki.sql.execute('create table zhuozi (a text);')

@@ -1,8 +1,12 @@
+# Travis CI YAML file. See
+# http://docs.travis-ci.com/user/getting-started/#Step-three%3A-Add-.travis.yml-file-to-your-repository
+
 language: python
 python:
   - "2.7"
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install --use-mirrors -e .
+# CFLAGS=-O0 speeds up lxml install. See
+# https://github.com/edx/diff-cover/issues/92
+install: CFLAGS=-O0 pip install --use-mirrors -e . lxml
 # command to run tests, e.g. python setup.py test
 script:  nosetests --exe
 matrix:
