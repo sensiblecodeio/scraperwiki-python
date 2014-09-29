@@ -135,6 +135,13 @@ def execute(query, data=None):
 
     result = connection.execute(query, data)
 
+    _State.table = None
+    _State.metadata = None
+    try:
+        del _State.table_pending
+    except AttributeError:
+        pass
+
     if not result.returns_rows:
         return {u'data': [], u'keys': []}
 
