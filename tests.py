@@ -299,6 +299,11 @@ class TestSave(SaveAndCheck):
             [(unicode(s),)]
         )
 
+    def test_save_and_drop(self):
+        scraperwiki.sql.save([], dict(foo=7), table_name="dropper")
+        scraperwiki.sql.execute("DROP TABLE dropper")
+        scraperwiki.sql.save([], dict(foo=9), table_name="dropper")
+
 class TestQuestionMark(TestCase):
     def test_one_question_mark_with_nonlist(self):
         scraperwiki.sql.execute('create table zhuozi (a text);')
