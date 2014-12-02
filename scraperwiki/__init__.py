@@ -12,3 +12,12 @@ import sql
 
 # Compatibility
 sqlite = sql
+
+class Error(Exception):
+    """All ScraperWiki exceptions are instances of this class
+    (usually via a subclass)."""
+    pass
+
+class CPUTimeExceededError(Error):
+    """CPU time limit exceeded."""
+    pass
