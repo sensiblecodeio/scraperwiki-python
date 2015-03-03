@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 from __future__ import absolute_import
 
 # This file is part of Local Scraperlibs.

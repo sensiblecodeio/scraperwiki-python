@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # utils.py
 # David Jones, ScraperWiki Limited
 # Thomas Levine, ScraperWiki Limited
