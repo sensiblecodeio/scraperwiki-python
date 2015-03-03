@@ -1,5 +1,5 @@
-from __future__ import absolute_import
 #! /usr/bin/env python2
+from __future__ import absolute_import
 import scraperwiki
 from six.moves import range
 
