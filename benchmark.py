@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 #! /usr/bin/env python2
 import scraperwiki
 import os
+from six.moves import range
 
-rows = [{'id': i, 'test': i * 2, 's': "abc"} for i in xrange(1000)]
+rows = [{'id': i, 'test': i * 2, 's': "abc"} for i in range(1000)]
 
 try:
     os.remove('scraperwiki.sqlite')
