@@ -24,13 +24,11 @@ class Blob(str):
     """
     Represents a blob as a string.
     """
-
 PYTHON_SQLITE_TYPE_MAP = {
     six.text_type: sqlalchemy.types.Text,
     str: sqlalchemy.types.Text,
 
-    int: sqlalchemy.types.Integer,
-    long: sqlalchemy.types.BigInteger,
+    int: sqlalchemy.types.BigInteger,
     bool: sqlalchemy.types.Boolean,
     float: sqlalchemy.types.Float,
 
@@ -39,6 +37,11 @@ PYTHON_SQLITE_TYPE_MAP = {
 
     Blob: sqlalchemy.types.LargeBinary,
 }
+
+try:
+    PYTHON_SQLITE_TYPE_MAP[long] = sqlalchemy.types.BigInteger
+except NameError:
+    pass
 
 
 class _State(object):
