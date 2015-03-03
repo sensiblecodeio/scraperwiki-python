@@ -6,7 +6,6 @@ import os
 import re
 import shutil
 import sqlite3
-import urllib2
 import warnings
 
 from subprocess import Popen, PIPE
