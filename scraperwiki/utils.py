@@ -13,8 +13,8 @@ import os
 import sys
 import warnings
 import tempfile
-import urllib
-import urllib2
+import six.moves.urllib.parse
+import six.moves.urllib.request
 import requests
 
 
@@ -29,9 +29,9 @@ def scrape(url, params=None, user_agent=None):
     if user_agent:
         headers['User-Agent'] = user_agent
 
-    data = params and urllib.urlencode(params) or None
-    req = urllib2.Request(url, data=data, headers=headers)
-    f = urllib2.urlopen(req)
+    data = params and six.moves.urllib.parse.urlencode(params) or None
+    req = six.moves.urllib.request.Request(url, data=data, headers=headers)
+    f = six.moves.urllib.request.urlopen(req)
 
     text = f.read()
     f.close()
