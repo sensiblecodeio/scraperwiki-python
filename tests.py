@@ -31,14 +31,16 @@ class Setup(TestCase):
 class TestException(TestCase):
     def testExceptionSaved(self):
         script = dedent("""
+            from __future__ import print_function
             import scraperwiki.runlog
-            print scraperwiki.runlog.setup()
+            print(scraperwiki.runlog.setup())
             raise ValueError
         """)
         process = Popen(["python", "-c", script],
                         stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
         stdout, stderr = process.communicate()
-
+        stdout = stdout.decode('utf-8')
+        stderr = stderr.decode('utf-8')
         assert 'Traceback' in stderr, "stderr should contain the original Python traceback"
         match = re.match(r'^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', stdout)
         assert match, "runlog.setup() should return a run_id"
@@ -63,17 +65,18 @@ class TestException(TestCase):
 
     def testRunlogSuccess(self):
         script = dedent("""
+            from __future__ import print_function
             import scraperwiki.runlog
-            print scraperwiki.runlog.setup()
+            print(scraperwiki.runlog.setup())
         """)
         process = Popen(["python", "-c", script],
                         stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
         stdout, stderr = process.communicate()
-
+        stdout = stdout.decode('utf-8')
+        stderr = stderr.decode('utf-8')
         l = scraperwiki.sql.select("""time, run_id, success
           FROM _sw_runlog
           ORDER BY time DESC LIMIT 1""")
-
         # Check that some record is stored.
         assert l
         # Check that it has saved a success column.
