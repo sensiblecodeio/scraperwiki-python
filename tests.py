@@ -1,11 +1,11 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 
 import datetime
 import os
 import re
 import shutil
 import sqlite3
-import urllib2
 import warnings
 
 from subprocess import Popen, PIPE
@@ -14,6 +14,7 @@ from textwrap import dedent
 from unittest import TestCase, main
 
 import scraperwiki
+import six
 
 # scraperwiki.sql._State.echo = True
 
@@ -30,14 +31,16 @@ class Setup(TestCase):
 class TestException(TestCase):
     def testExceptionSaved(self):
         script = dedent("""
+            from __future__ import print_function
             import scraperwiki.runlog
-            print scraperwiki.runlog.setup()
+            print(scraperwiki.runlog.setup())
             raise ValueError
         """)
         process = Popen(["python", "-c", script],
                         stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
         stdout, stderr = process.communicate()
-
+        stdout = stdout.decode('utf-8')
+        stderr = stderr.decode('utf-8')
         assert 'Traceback' in stderr, "stderr should contain the original Python traceback"
         match = re.match(r'^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', stdout)
         assert match, "runlog.setup() should return a run_id"
@@ -62,17 +65,18 @@ class TestException(TestCase):
 
     def testRunlogSuccess(self):
         script = dedent("""
+            from __future__ import print_function
             import scraperwiki.runlog
-            print scraperwiki.runlog.setup()
+            print(scraperwiki.runlog.setup())
         """)
         process = Popen(["python", "-c", script],
                         stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
         stdout, stderr = process.communicate()
-
+        stdout = stdout.decode('utf-8')
+        stderr = stderr.decode('utf-8')
         l = scraperwiki.sql.select("""time, run_id, success
           FROM _sw_runlog
           ORDER BY time DESC LIMIT 1""")
-
         # Check that some record is stored.
         assert l
         # Check that it has saved a success column.
@@ -109,9 +113,9 @@ class TestSaveGetVar(TestCase):
         date1 = datetime.datetime.now()
         date2 = datetime.date.today()
         scraperwiki.sql.save_var("weird", date1)
-        self.assertEqual(scraperwiki.sql.get_var("weird"), unicode(date1))
+        self.assertEqual(scraperwiki.sql.get_var("weird"), six.text_type(date1))
         scraperwiki.sql.save_var("weird", date2)
-        self.assertEqual(scraperwiki.sql.get_var("weird"), unicode(date2))
+        self.assertEqual(scraperwiki.sql.get_var("weird"), six.text_type(date2))
 
     def test_save_multiple_values(self):
         scraperwiki.sql.save_var('foo', 'hello')
@@ -236,8 +240,8 @@ class TestSaveColumn(TestCase):
                         stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
         stdout, stderr = process.communicate()
         assert process.returncode == 0
-        self.assertEqual(stdout, "")
-        self.assertEqual(stderr, "")
+        self.assertEqual(stdout, "".encode('utf-8'))
+        self.assertEqual(stderr, "".encode('utf-8'))
 
 
 class TestSave(SaveAndCheck):
@@ -298,7 +302,7 @@ class TestSave(SaveAndCheck):
         self.save_and_check(
             {"text": s},
             "lxml",
-            [(unicode(s),)]
+            [(six.text_type(s),)]
         )
 
     def test_save_and_drop(self):
@@ -349,7 +353,7 @@ class TestDateTime(TestCase):
                 scraperwiki.sql.select("* FROM swdata"))
 
             self.assertEqual(
-                {u'keys': [u'birthday'], u'data': [(unicode(d),)]},
+                {u'keys': [u'birthday'], u'data': [(six.text_type(d),)]},
                 scraperwiki.sql.execute("SELECT * FROM swdata"))
 
         self.assertEqual(str(d), self.rawdate(column="birthday"))
@@ -360,7 +364,7 @@ class TestDateTime(TestCase):
             scraperwiki.sql.save([], {"birthday": d},
               table_name="datetimetest")
 
-            exemplar = unicode(d)
+            exemplar = six.text_type(d)
             # SQLAlchemy appears to convert with extended precision.
             exemplar += ".000000"
 

@@ -1,4 +1,5 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
+from __future__ import absolute_import
 
 # This file is part of Local Scraperlibs.
 
@@ -42,7 +43,7 @@ config = dict(name='scraperwiki',
 
 try:
     from setuptools import setup
-    config['install_requires'] = ['requests',
+    config['install_requires'] = ['requests', 'six',
                                   'sqlalchemy', 'alembic'],
 except ImportError:
     pass

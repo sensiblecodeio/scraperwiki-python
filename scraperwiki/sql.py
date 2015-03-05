@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from collections import Iterable, Mapping, OrderedDict
 
 import atexit
@@ -9,6 +10,7 @@ import warnings
 
 import alembic.ddl
 import sqlalchemy
+import six
 
 DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME",
                                "sqlite:///scraperwiki.sqlite")
@@ -22,13 +24,11 @@ class Blob(str):
     """
     Represents a blob as a string.
     """
-
 PYTHON_SQLITE_TYPE_MAP = {
-    unicode: sqlalchemy.types.Text,
+    six.text_type: sqlalchemy.types.Text,
     str: sqlalchemy.types.Text,
 
-    int: sqlalchemy.types.Integer,
-    long: sqlalchemy.types.BigInteger,
+    int: sqlalchemy.types.BigInteger,
     bool: sqlalchemy.types.Boolean,
     float: sqlalchemy.types.Float,
 
@@ -37,6 +37,11 @@ PYTHON_SQLITE_TYPE_MAP = {
 
     Blob: sqlalchemy.types.LargeBinary,
 }
+
+try:
+    PYTHON_SQLITE_TYPE_MAP[long] = sqlalchemy.types.BigInteger
+except NameError:
+    pass
 
 
 class _State(object):
@@ -145,7 +150,7 @@ def execute(query, data=None):
     if not result.returns_rows:
         return {u'data': [], u'keys': []}
 
-    return {u'data': result.fetchall(), u'keys': result.keys()}
+    return {u'data': result.fetchall(), u'keys': list(result.keys())}
 
 
 def select(query, data=None):
@@ -162,7 +167,7 @@ def select(query, data=None):
 
     rows = []
     for row in result:
-        rows.append(dict(row.items()))
+        rows.append(dict(list(row.items())))
 
     return rows
 
@@ -205,7 +210,7 @@ def _set_table(table_name):
     _State.table = sqlalchemy.Table(table_name, _State.metadata,
                                     extend_existing=True)
 
-    if _State.table.columns.keys() == []:
+    if list(_State.table.columns.keys()) == []:
         _State.table_pending = True
     else:
         _State.table_pending = False
@@ -259,7 +264,7 @@ def get_var(name, default=None):
     connection = _State.connection()
     _State.new_transaction()
 
-    if _State.vars_table_name not in _State.metadata.tables.keys():
+    if _State.vars_table_name not in list(_State.metadata.tables.keys()):
         return None
 
     table = sqlalchemy.Table(_State.vars_table_name, _State.metadata)
@@ -316,11 +321,11 @@ def fit_row(connection, row, unique_keys):
     current table. If it does not fit, adds the required columns.
     """
     new_columns = []
-    for column_name, column_value in row.items():
+    for column_name, column_value in list(row.items()):
         new_column = sqlalchemy.Column(column_name,
                                        get_column_type(column_value))
 
-        if not str(new_column) in _State.table.columns.keys():
+        if not str(new_column) in list(_State.table.columns.keys()):
             new_columns.append(new_column)
             _State.table.append_column(new_column)
 
