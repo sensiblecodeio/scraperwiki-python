@@ -16,8 +16,8 @@ from unittest import TestCase, main
 import scraperwiki
 import six
 
+import sys
 # scraperwiki.sql._State.echo = True
-
 DB_NAME = 'scraperwiki.sqlite'
 
 class Setup(TestCase):
@@ -36,8 +36,9 @@ class TestException(TestCase):
             print(scraperwiki.runlog.setup())
             raise ValueError
         """)
-        process = Popen(["python", "-c", script],
-                        stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
+        with open("/dev/null") as null:
+            process = Popen([sys.executable, "-c", script],
+                             stdout=PIPE, stderr=PIPE, stdin=null)
         stdout, stderr = process.communicate()
         stdout = stdout.decode('utf-8')
         stderr = stderr.decode('utf-8')
@@ -69,8 +70,9 @@ class TestException(TestCase):
             import scraperwiki.runlog
             print(scraperwiki.runlog.setup())
         """)
-        process = Popen(["python", "-c", script],
-                        stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
+        with open("/dev/null") as null:
+            process = Popen([sys.executable, "-c", script],
+                             stdout=PIPE, stderr=PIPE, stdin=null)
         stdout, stderr = process.communicate()
         stdout = stdout.decode('utf-8')
         stderr = stderr.decode('utf-8')
@@ -236,8 +238,9 @@ class TestSaveColumn(TestCase):
           import scraperwiki
           scraperwiki.sql.save(['id'], dict(id=1, a="bar", b="foo"))
           """)
-        process = Popen(["python", "-c", script],
-                        stdout=PIPE, stderr=PIPE, stdin=open("/dev/null"))
+        with open("/dev/null") as null:
+            process = Popen([sys.executable, "-c", script],
+                             stdout=PIPE, stderr=PIPE, stdin=null)
         stdout, stderr = process.communicate()
         assert process.returncode == 0
         self.assertEqual(stdout, "".encode('utf-8'))
