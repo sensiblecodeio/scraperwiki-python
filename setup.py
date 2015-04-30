@@ -36,7 +36,7 @@ config = dict(name='scraperwiki',
               'Programming Language :: SQL',
               'Topic :: Database :: Front-Ends',
               ],
-              packages=['scraperwiki', 'scraperwiki.runlog'],
+              packages=['scraperwiki'],
               version='0.4.1',
               license='GPL',
               )
