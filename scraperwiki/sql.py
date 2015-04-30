@@ -19,7 +19,7 @@ DATABASE_TIMEOUT = float(os.environ.get("SCRAPERWIKI_DATABASE_TIMEOUT", 300))
 SECONDS_BETWEEN_COMMIT = 2
 
 
-class Blob(str):
+class Blob(bytes):
 
     """
     Represents a blob as a string.
@@ -27,7 +27,6 @@ class Blob(str):
 PYTHON_SQLITE_TYPE_MAP = {
     six.text_type: sqlalchemy.types.Text,
     str: sqlalchemy.types.Text,
-
     int: sqlalchemy.types.BigInteger,
     bool: sqlalchemy.types.Boolean,
     float: sqlalchemy.types.Float,
@@ -36,6 +35,7 @@ PYTHON_SQLITE_TYPE_MAP = {
     datetime.datetime: sqlalchemy.types.DateTime,
 
     Blob: sqlalchemy.types.LargeBinary,
+    bytes: sqlalchemy.types.LargeBinary,
 }
 
 try:
@@ -249,8 +249,10 @@ def save_var(name, value):
 
     column_type = get_column_type(value)
 
+    value_blob = bytes(str(value), 'utf-8')
     values = dict(name=name,
-                  value_blob=Blob(value),
+                  value_blob=value_blob,
+                  # value_blob=Blob(value),
                   type=column_type.__visit_name__.lower())
 
     vars_table.insert(prefixes=['OR REPLACE']).values(**values).execute()
@@ -268,21 +270,20 @@ def get_var(name, default=None):
         return None
 
     table = sqlalchemy.Table(_State.vars_table_name, _State.metadata)
-
     s = sqlalchemy.select([table.c.value_blob, table.c.type])
     s = s.where(table.c.name == name)
     result = connection.execute(s).fetchone()
 
     if not result:
         return None
-
+    print(result.value_blob)
+    print(type(result.value_blob))
     # This is to do the variable type conversion through the SQL engine
     execute = connection.execute
     execute("CREATE TEMPORARY TABLE _sw_tmp ('value' {})".format(result.type))
     execute("INSERT INTO _sw_tmp VALUES (:value)", value=result.value_blob)
     var = execute('SELECT value FROM _sw_tmp').fetchone().value
     execute("DROP TABLE _sw_tmp")
-
     return var
 
 
@@ -364,7 +365,7 @@ def get_column_type(column_value):
     """
     return PYTHON_SQLITE_TYPE_MAP.get(type(column_value),
       sqlalchemy.types.Text)
-      
+
 
 
 def commit():
