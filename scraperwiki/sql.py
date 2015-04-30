@@ -249,7 +249,11 @@ def save_var(name, value):
 
     column_type = get_column_type(value)
 
-    value_blob = bytes(str(value), 'utf-8')
+    if column_type == sqlalchemy.types.LargeBinary:
+        value_blob = value
+    else:
+        value_blob = bytes(str(value), 'utf-8')
+
     values = dict(name=name,
                   value_blob=value_blob,
                   # value_blob=Blob(value),
@@ -263,6 +267,14 @@ def get_var(name, default=None):
     Returns the variable with the provided key from the
     table specified by _State.vars_table_name.
     """
+    alchemytypes = {"text": lambda x: x.decode('utf-8'),
+                    "big_integer": lambda x: int(x),
+                    "date": lambda x: x.decode('utf-8'),
+                    "datetime": lambda x: x.decode('utf-8'),
+                    "float": lambda x: float(x),
+                    "large_binary": lambda x: x,
+                    "boolean": lambda x: x==b'True'}
+
     connection = _State.connection()
     _State.new_transaction()
 
@@ -276,15 +288,16 @@ def get_var(name, default=None):
 
     if not result:
         return None
-    print(result.value_blob)
-    print(type(result.value_blob))
+
+    return alchemytypes[result[1]](result[0])
+
     # This is to do the variable type conversion through the SQL engine
     execute = connection.execute
     execute("CREATE TEMPORARY TABLE _sw_tmp ('value' {})".format(result.type))
     execute("INSERT INTO _sw_tmp VALUES (:value)", value=result.value_blob)
     var = execute('SELECT value FROM _sw_tmp').fetchone().value
     execute("DROP TABLE _sw_tmp")
-    return var
+    return var.decode('utf-8')
 
 
 def create_index(column_names, unique=False):

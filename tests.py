@@ -106,10 +106,24 @@ class TestSaveGetVar(TestCase):
         self.assertEqual(scraperwiki.sql.get_var("weird"), var)
 
     def test_string(self):
-        self.savegetvar("asdio")
+        self.savegetvar("asdio\u1234")
 
     def test_int(self):
         self.savegetvar(1)
+
+    def test_float(self):
+        self.savegetvar(1.1)
+
+    def test_bool(self):
+        self.savegetvar(False)
+
+    def test_bool2(self):
+        self.savegetvar(True)
+
+
+    def test_bytes(self):
+        self.savegetvar(b"asodpa\x00\x22")
+
 
     def test_date(self):
         date1 = datetime.datetime.now()
@@ -120,11 +134,11 @@ class TestSaveGetVar(TestCase):
         self.assertEqual(scraperwiki.sql.get_var("weird"), six.text_type(date2))
 
     def test_save_multiple_values(self):
-        scraperwiki.sql.save_var('foo', 'hello')
-        scraperwiki.sql.save_var('bar', 'goodbye')
+        scraperwiki.sql.save_var('foo\xc3', 'hello')
+        scraperwiki.sql.save_var('bar', 'goodbye\u1234')
 
-        self.assertEqual('hello', scraperwiki.sql.get_var('foo'))
-        self.assertEqual('goodbye', scraperwiki.sql.get_var('bar'))
+        self.assertEqual('hello', scraperwiki.sql.get_var('foo\xc3'))
+        self.assertEqual('goodbye\u1234', scraperwiki.sql.get_var('bar'))
 
 class TestGetNonexistantVar(TestCase):
     def test_get(self):
@@ -133,7 +147,7 @@ class TestGetNonexistantVar(TestCase):
 class TestSaveVar(TestCase):
     def setUp(self):
         super(TestSaveVar, self).setUp()
-        scraperwiki.sql.save_var("birthday", "November 30, 1888")
+        scraperwiki.sql.save_var("birthday", "\u1234November 30, 1888")
         connection = sqlite3.connect(DB_NAME)
         self.cursor = connection.cursor()
 
@@ -144,9 +158,9 @@ class TestSaveVar(TestCase):
           WHERE name == "birthday"
           """)
         observed = self.cursor.fetchall()
-        expected = [("birthday", "November 30, 1888", "text",)]
+        expected = [("birthday", "\u1234November 30, 1888", "text",)]
         ((a, b, c),) = observed
-        observed = [(a, str(b), c)]
+        observed = [(a, b.decode('utf-8'), c)]
         self.assertEqual(observed, expected)
 
 class SaveAndCheck(TestCase):
