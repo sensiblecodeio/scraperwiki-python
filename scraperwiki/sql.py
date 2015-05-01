@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 from collections import Iterable, Mapping, OrderedDict
 
 import atexit
@@ -17,7 +17,7 @@ DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME",
 
 DATABASE_TIMEOUT = float(os.environ.get("SCRAPERWIKI_DATABASE_TIMEOUT", 300))
 SECONDS_BETWEEN_COMMIT = 2
-
+unicode = type(u'')
 
 class Blob(bytes):
 
@@ -252,7 +252,7 @@ def save_var(name, value):
     if column_type == sqlalchemy.types.LargeBinary:
         value_blob = value
     else:
-        value_blob = bytes(str(value), 'utf-8')
+        value_blob = unicode(value).encode('utf-8')
 
     values = dict(name=name,
                   value_blob=value_blob,
