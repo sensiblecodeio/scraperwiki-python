@@ -55,7 +55,7 @@ scraperwiki.sql.execute(sql[, vars])
 
     scraperwiki.sql.execute("INSERT INTO swdata VALUES (?,?,?)", [a,b,c])
 
-  The ‘?’ convention is like "paramstyle qmark" from `Python's DB API 2.0 <http://www.python.org/dev/peps/pep-0249/>`_ (but note that the API to the datastore is nothing like Python's DB API).  In particular the ‘?’ does not itself need quoting, and can in general only be used where a literal would appear.
+  The ‘?’ convention is like "paramstyle qmark" from `Python's DB API 2.0 <http://www.python.org/dev/peps/pep-0249/>`_ (but note that the API to the datastore is nothing like Python's DB API).  In particular the ‘?’ does not itself need quoting, and can in general only be used where a literal would appear. (Note that you cannot substitute in, for example, table or column names.)
 
 scraperwiki.sql.select(sqlfrag[, vars])
   Executes a select command on the datastore.  For example::
