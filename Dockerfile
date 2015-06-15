@@ -1,12 +1,6 @@
 FROM ubuntu:14.04
 
-RUN apt-get update
-RUN apt-get install -y python3-pip
-
-RUN apt-get install -y python3-nose
-RUN apt-get install -y ack-grep vim
-RUN apt-get install -y python3-lxml
-RUN apt-get install -y python-lxml python-nose python-pip
+RUN apt-get update && apt-get install -y python3-pip python3-nose ack-grep vim python3-lxml python-lxml python-nose python-pip
 
 RUN locale-gen en_GB.UTF-8
 
