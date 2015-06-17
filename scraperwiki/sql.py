@@ -1,3 +1,4 @@
+from __future__ import absolute_import, print_function
 from collections import Iterable, Mapping, OrderedDict
 
 import atexit
@@ -9,26 +10,24 @@ import warnings
 
 import alembic.ddl
 import sqlalchemy
+import six
 
 DATABASE_NAME = os.environ.get("SCRAPERWIKI_DATABASE_NAME",
                                "sqlite:///scraperwiki.sqlite")
 
 DATABASE_TIMEOUT = float(os.environ.get("SCRAPERWIKI_DATABASE_TIMEOUT", 300))
 SECONDS_BETWEEN_COMMIT = 2
+unicode = type(u'')
 
-
-class Blob(str):
+class Blob(bytes):
 
     """
     Represents a blob as a string.
     """
-
 PYTHON_SQLITE_TYPE_MAP = {
-    unicode: sqlalchemy.types.Text,
+    six.text_type: sqlalchemy.types.Text,
     str: sqlalchemy.types.Text,
-
-    int: sqlalchemy.types.Integer,
-    long: sqlalchemy.types.BigInteger,
+    int: sqlalchemy.types.BigInteger,
     bool: sqlalchemy.types.Boolean,
     float: sqlalchemy.types.Float,
 
@@ -36,7 +35,13 @@ PYTHON_SQLITE_TYPE_MAP = {
     datetime.datetime: sqlalchemy.types.DateTime,
 
     Blob: sqlalchemy.types.LargeBinary,
+    bytes: sqlalchemy.types.LargeBinary,
 }
+
+try:
+    PYTHON_SQLITE_TYPE_MAP[long] = sqlalchemy.types.BigInteger
+except NameError:
+    pass
 
 
 class _State(object):
@@ -145,7 +150,7 @@ def execute(query, data=None):
     if not result.returns_rows:
         return {u'data': [], u'keys': []}
 
-    return {u'data': result.fetchall(), u'keys': result.keys()}
+    return {u'data': result.fetchall(), u'keys': list(result.keys())}
 
 
 def select(query, data=None):
@@ -162,7 +167,7 @@ def select(query, data=None):
 
     rows = []
     for row in result:
-        rows.append(dict(row.items()))
+        rows.append(dict(list(row.items())))
 
     return rows
 
@@ -205,7 +210,7 @@ def _set_table(table_name):
     _State.table = sqlalchemy.Table(table_name, _State.metadata,
                                     extend_existing=True)
 
-    if _State.table.columns.keys() == []:
+    if list(_State.table.columns.keys()) == []:
         _State.table_pending = True
     else:
         _State.table_pending = False
@@ -244,8 +249,14 @@ def save_var(name, value):
 
     column_type = get_column_type(value)
 
+    if column_type == sqlalchemy.types.LargeBinary:
+        value_blob = value
+    else:
+        value_blob = unicode(value).encode('utf-8')
+
     values = dict(name=name,
-                  value_blob=Blob(value),
+                  value_blob=value_blob,
+                  # value_blob=Blob(value),
                   type=column_type.__visit_name__.lower())
 
     vars_table.insert(prefixes=['OR REPLACE']).values(**values).execute()
@@ -256,14 +267,21 @@ def get_var(name, default=None):
     Returns the variable with the provided key from the
     table specified by _State.vars_table_name.
     """
+    alchemytypes = {"text": lambda x: x.decode('utf-8'),
+                    "big_integer": lambda x: int(x),
+                    "date": lambda x: x.decode('utf-8'),
+                    "datetime": lambda x: x.decode('utf-8'),
+                    "float": lambda x: float(x),
+                    "large_binary": lambda x: x,
+                    "boolean": lambda x: x==b'True'}
+
     connection = _State.connection()
     _State.new_transaction()
 
-    if _State.vars_table_name not in _State.metadata.tables.keys():
+    if _State.vars_table_name not in list(_State.metadata.tables.keys()):
         return None
 
     table = sqlalchemy.Table(_State.vars_table_name, _State.metadata)
-
     s = sqlalchemy.select([table.c.value_blob, table.c.type])
     s = s.where(table.c.name == name)
     result = connection.execute(s).fetchone()
@@ -271,14 +289,15 @@ def get_var(name, default=None):
     if not result:
         return None
 
+    return alchemytypes[result[1]](result[0])
+
     # This is to do the variable type conversion through the SQL engine
     execute = connection.execute
     execute("CREATE TEMPORARY TABLE _sw_tmp ('value' {})".format(result.type))
     execute("INSERT INTO _sw_tmp VALUES (:value)", value=result.value_blob)
     var = execute('SELECT value FROM _sw_tmp').fetchone().value
     execute("DROP TABLE _sw_tmp")
-
-    return var
+    return var.decode('utf-8')
 
 
 def create_index(column_names, unique=False):
@@ -316,11 +335,11 @@ def fit_row(connection, row, unique_keys):
     current table. If it does not fit, adds the required columns.
     """
     new_columns = []
-    for column_name, column_value in row.items():
+    for column_name, column_value in list(row.items()):
         new_column = sqlalchemy.Column(column_name,
                                        get_column_type(column_value))
 
-        if not str(new_column) in _State.table.columns.keys():
+        if not str(new_column) in list(_State.table.columns.keys()):
             new_columns.append(new_column)
             _State.table.append_column(new_column)
 
@@ -359,7 +378,7 @@ def get_column_type(column_value):
     """
     return PYTHON_SQLITE_TYPE_MAP.get(type(column_value),
       sqlalchemy.types.Text)
-      
+
 
 
 def commit():

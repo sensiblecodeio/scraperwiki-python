@@ -1,14 +1,15 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # Thomas Levine, ScraperWiki Limited
 
 '''
 Local version of ScraperWiki Utils, documentation here:
 https://scraperwiki.com/docs/python/python_help_documentation/
 '''
+from __future__ import absolute_import
 
 from .utils import scrape, pdftoxml, status
-import utils
-import sql
+from . import utils
+from . import sql
 
 # Compatibility
 sqlite = sql
