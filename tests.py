@@ -195,7 +195,7 @@ class TestSaveColumn(TestCase):
 
         script = dedent(u"""
           import scraperwiki
-          scraperwiki.sql.save(['id'], dict(id=1, a="bar\xaa", b="foo\xaa"))
+          scraperwiki.sql.save(['id'], dict(id=1, a=u"bar\xaa", b=u"foo\xaa"))
           """)
         with open("/dev/null") as null:
             process = Popen([sys.executable, "-c", script],
