@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 import datetime
+import json
 import os
 import re
 import shutil
@@ -195,7 +196,7 @@ class TestSaveColumn(TestCase):
 
         script = dedent(u"""
           import scraperwiki
-          scraperwiki.sql.save(['id'], dict(id=1, a="bar\xaa", b="foo\xaa"))
+          scraperwiki.sql.save(['id'], dict(id=1, a=u"bar\xaa", b=u"foo\xaa"))
           """)
         with open("/dev/null") as null:
             process = Popen([sys.executable, "-c", script],
@@ -217,6 +218,12 @@ class TestSave(SaveAndCheck):
             {u"lastname\xaa": u"LeTourneau\u1234"}, u"diesel-engineers\xaa", [
                 (u'LeTourneau\u1234',)]
         )
+
+        # Ensure we can round-trip a string and then json encode it.
+        # https://github.com/scraperwiki/scraperwiki-python/pull/85
+        scraperwiki.sql.save([], {"test": "teststring"}, table_name="teststring")
+        data = scraperwiki.sql.select("* FROM teststring")
+        json.dumps(data)
 
     def test_save_twice(self):
         self.save_and_check(
