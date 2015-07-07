@@ -35,8 +35,11 @@ PYTHON_SQLITE_TYPE_MAP = {
     datetime.datetime: sqlalchemy.types.DateTime,
 
     Blob: sqlalchemy.types.LargeBinary,
-    bytes: sqlalchemy.types.LargeBinary,
 }
+
+if bytes is not str:
+    # On 2.7, bytes *is* str, so we don't want to overwrite that.
+    PYTHON_SQLITE_TYPE_MAP[bytes] = sqlalchemy.types.LargeBinary
 
 try:
     PYTHON_SQLITE_TYPE_MAP[long] = sqlalchemy.types.BigInteger
