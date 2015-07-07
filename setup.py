@@ -38,7 +38,7 @@ config = dict(name='scraperwiki',
               'Topic :: Database :: Front-Ends',
               ],
               packages=['scraperwiki'],
-              version='0.5',
+              version='0.5.1',
               license='GPL',
               )
 
