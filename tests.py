@@ -357,6 +357,11 @@ class TestStatus(TestCase):
 
     # XXX neeed some mocking tests for case of run inside a box
 
+class TestUnicodeColumns(TestCase):
+    maxDiff = None
+    def test_add_column_once_only(self):
+        scraperwiki.sqlite.save(data = {"i": 1, u"a\xa0b": 1}, unique_keys = ['i'])
+        scraperwiki.sqlite.save(data = {"i": 2, u"a\xa0b": 2}, unique_keys = ['i'])
 
 class TestImports(TestCase):
 
