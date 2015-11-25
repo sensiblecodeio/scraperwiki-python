@@ -5,6 +5,7 @@ language: python
 python:
   - "2.7"
   - "3.4"
+  - "3.5"
 # CFLAGS=-O0 speeds up lxml install. See
 # https://github.com/edx/diff-cover/issues/92
 install: CFLAGS=-O0 pip install -e . lxml
