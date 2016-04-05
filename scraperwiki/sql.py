@@ -19,6 +19,9 @@ DATABASE_TIMEOUT = float(os.environ.get("SCRAPERWIKI_DATABASE_TIMEOUT", 300))
 SECONDS_BETWEEN_COMMIT = 2
 unicode = type(u'')
 
+# The scraperwiki.sqlite.SqliteError exception
+SqliteError = sqlalchemy.exc.SQLAlchemyError
+
 class Blob(bytes):
 
     """
