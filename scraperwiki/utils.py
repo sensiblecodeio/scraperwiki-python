@@ -80,3 +80,6 @@ def status(type, message=None):
     r = requests.post(url, data={'type': type, 'message': message})
     r.raise_for_status()
     return r.content
+
+def swimport(scrapername):
+    return __import__(scrapername)

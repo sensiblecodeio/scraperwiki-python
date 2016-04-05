@@ -7,7 +7,7 @@ https://scraperwiki.com/docs/python/python_help_documentation/
 '''
 from __future__ import absolute_import
 
-from .utils import scrape, pdftoxml, status
+from .utils import scrape, pdftoxml, status, swimport
 from . import utils
 from . import sql
 
