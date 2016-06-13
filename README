@@ -16,6 +16,12 @@ Installing
 
    pip install scraperwiki
 
+Installing Dependencies
+-----------------------
+##### pdftohtml
+###### Ubuntu:
+   apt-get install poppler-utils
+
 Scraping
 --------
 
