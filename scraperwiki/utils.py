@@ -71,7 +71,7 @@ def status(type, message=None):
     if not _in_box():
         return "Not in box"
 
-    url = os.environ.get("SW_STATUS_URL", "https://scraperwiki.com/api/status")
+    url = os.environ.get("SW_STATUS_URL", "https://app.quickcode.io/api/status")
     if url == "OFF":
         # For development mode
         return
