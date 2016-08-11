@@ -7,7 +7,7 @@ python:
   - "3.4"
 # CFLAGS=-O0 speeds up lxml install. See
 # https://github.com/edx/diff-cover/issues/92
-install: CFLAGS=-O0 pip install --use-mirrors -e . lxml
+install: CFLAGS=-O0 pip install -e . lxml
 # command to run tests, e.g. python setup.py test
 script:  nosetests --exe
 matrix:
