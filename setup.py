@@ -24,7 +24,7 @@ if not has_external_dependency('pdftohtml'):
 
 config = dict(name='scraperwiki',
               author='Francis Irving',
-              author_email='francis@scraperwiki.com',
+              author_email='francis@sensiblecode.io',
               description='Local version of ScraperWiki libraries',
               url='https://github.com/scraperwiki/scraperwiki-python',
               classifiers=[
