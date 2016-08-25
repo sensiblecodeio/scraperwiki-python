@@ -62,7 +62,7 @@ def pdftoxml(pdfdata, options=""):
     except AttributeError:
         pass
         
-    return xmldata.d
+    return xmldata
 
 
 def _in_box():
