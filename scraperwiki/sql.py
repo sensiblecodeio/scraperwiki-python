@@ -128,7 +128,7 @@ def commit_transactions():
         _State._transaction = None
 
 
-def execute(query, data=None):
+def execute(query, data=None, verbose=False):
     """
     Execute an arbitrary SQL query given by query, returning any
     results as a list of OrderedDicts. A list of values can be supplied as an,
@@ -156,7 +156,7 @@ def execute(query, data=None):
     return {u'data': result.fetchall(), u'keys': list(result.keys())}
 
 
-def select(query, data=None):
+def select(query, data=None, verbose=False):
     """
     Perform a sql select statement with the given query (without 'select') and
     return any results as a list of OrderedDicts.
@@ -175,7 +175,7 @@ def select(query, data=None):
     return rows
 
 
-def save(unique_keys, data, table_name='swdata'):
+def save(unique_keys, data, table_name='swdata', verbose=False):
     """
     Save the given data to the table specified by `table_name`
     (which defaults to 'swdata'). The data must be a mapping
@@ -232,7 +232,7 @@ def show_tables():
     return {row['name']: row['sql'] for row in response}
 
 
-def save_var(name, value):
+def save_var(name, value, verbose=False):
     """
     Save a variable to the table specified by _State.vars_table_name. Key is
     the name of the variable, and value is the value.
@@ -265,7 +265,7 @@ def save_var(name, value):
     vars_table.insert(prefixes=['OR REPLACE']).values(**values).execute()
 
 
-def get_var(name, default=None):
+def get_var(name, default=None, verbose=False):
     """
     Returns the variable with the provided key from the
     table specified by _State.vars_table_name.
@@ -384,7 +384,7 @@ def get_column_type(column_value):
 
 
 
-def commit():
+def commit(verbose=False):
     warnings.warn("scraperwiki.sql.commit is now a no-op")
 
 
