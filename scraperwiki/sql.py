@@ -123,7 +123,7 @@ def commit_transactions():
     """
     Ensure any outstanding transactions are committed on exit
     """
-    if _State._transaction is not None:
+    if _State is not None and _State._transaction is not None:
         _State._transaction.commit()
         _State._transaction = None
 
