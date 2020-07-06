@@ -1,0 +1,4 @@
+six
+requests
+alembic
+sqlalchemy
