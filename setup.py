@@ -46,7 +46,7 @@ config = dict(name='scraperwiki',
 try:
     from setuptools import setup
     config['install_requires'] = ['requests', 'six',
-                                  'sqlalchemy', 'alembic'],
+                                  'sqlalchemy==1.0.19', 'alembic'],
 except ImportError:
     pass
 
