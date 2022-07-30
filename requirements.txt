@@ -1,4 +1,4 @@
-six
+six==1.10.0
 requests
-alembic==0.7.7
-sqlalchemy==0.9.10
+alembic==0.8.3
+sqlalchemy==1.0.9
