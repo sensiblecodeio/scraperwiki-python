@@ -1,4 +1,4 @@
 six
 requests
-alembic
-sqlalchemy
+alembic==0.7.7
+sqlalchemy==0.9.10
