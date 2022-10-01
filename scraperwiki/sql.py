@@ -185,7 +185,7 @@ def save(unique_keys, data, table_name='swdata'):
     or an iterable of mappings. Unique keys is a list of keys that exist
     for all rows and for which a unique index will be created.
     """
-
+    print("unique_keys in save:", unique_keys)
     _set_table(table_name)
 
     connection = _State.connection()
@@ -340,6 +340,7 @@ def fit_row(connection, row, unique_keys):
     Takes a row and checks to make sure it fits in the columns of the
     current table. If it does not fit, adds the required columns.
     """
+    print("unique keys in fit_row", unique_keys)
     new_columns = []
     for column_name, column_value in list(row.items()):
         new_column = sqlalchemy.Column(column_name,
@@ -363,7 +364,9 @@ def create_table(unique_keys):
     """
     _State.new_transaction()
     _State.table.create(bind=_State.engine, checkfirst=True)
+    print("unique_keys in create_table: ", unique_keys)
     if unique_keys != []:
+        print("creating with unique keys")
         create_index(unique_keys, unique=True)
     _State.table_pending = False
     _State.reflect_metadata()
